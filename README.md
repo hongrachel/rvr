@@ -1,8 +1,11 @@
-# Learning Adversarially Fair and Transferable Representations
+# Representations via Representations
+Frances Ding, Prasad Patil, Giovanni Parmigiani, Cynthia Dwork
+
+Code based on: Learning Adversarially Fair and Transferable Representations
 David Madras, Elliot Creager, Toni Pitassi, Richard Zemel
 https://arxiv.org/abs/1802.06309
 
-Code represents equal contribution with [David Madras](https://github.com/dmadras/).
+LAFTR code represents equal contribution from Elliot Creager and [David Madras](https://github.com/dmadras/).
 Thanks to [Jake Snell](https://github.com/jakesnell) and [James Lucas](https://github.com/AtheMathmo) for contributing the experiment sweep code.
 
 ## setting up a project-specific virtual env
