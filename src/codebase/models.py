@@ -220,6 +220,18 @@ class WassGanNoSig(WassGan):
     def _get_aud_preds_from_logits(self, logits):
         return logits
 
+# =========================================
+# New addition for RvR
+# MultiWassGan class has multi-class loss for the adversary, rather than binary classification
+# =========================================
+
+class MultiWassGan(AbstractBaseNet):
+    """Uses multiclass Wasserstein loss function"""
+    def _get_class_loss(self, Y_hat, Y):
+        return wass_loss(Y, Y_hat)
+
+    def _get_aud_loss(self, A_hat, A):
+        return multi_wass_loss(A, A_hat)
 
 class DemParWassGan(WassGan, DemParGan):
     """Like DemParGan, but wass_loss"""
@@ -334,6 +346,22 @@ class WeightedEqoddsWassGan(WassGan, WeightedEqoddsGan):
     def _get_aud_loss(self, A_hat, A):
         return WassGan._get_aud_loss(self, A_hat, A)
 
+# ====================================
+# New for RvR
+
+class WeightedDemParMultiWassGan(MultiWassGan, WeightedDemParGan):
+    def _get_class_loss(self, Y_hat, Y):
+        return MultiWassGan._get_class_loss(self, Y_hat, Y)
+
+    def _get_aud_loss(self, A_hat, A):
+        return MultiWassGan._get_aud_loss(self, A_hat, A)
+
+class WeightedEqoddsMultiWassGan(MultiWassGan, WeightedEqoddsGan):
+    def _get_class_loss(self, Y_hat, Y):
+        return MultiWassGan._get_class_loss(self, Y_hat, Y)
+
+    def _get_aud_loss(self, A_hat, A):
+        return MultiWassGan._get_aud_loss(self, A_hat, A)
 
 
 class WeightedDemParWassGpGan(WeightedDemParWassGan):
@@ -480,6 +508,9 @@ def classification_error(target, pred):
 
 def wass_loss(target, pred):
     return tf.squeeze(tf.abs(target - pred))
+
+def multi_wass_loss(target, pred):
+    return tf.reduce_max(tf.abs(target-pred), axis=1)
 
 
 def soft_rate(ind1, ind2, pred): #Y, A, Yhat
