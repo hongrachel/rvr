@@ -105,6 +105,9 @@ def DP(Ypred, A): #demographic disparity
 def NLL(Y, Ypred, eps=eps):
     return -np.mean(np.multiply(Y, np.log(Ypred + eps)) + np.multiply(1. - Y, np.log(1 - Ypred + eps)))
 
+def proportions(A):
+    return np.mean(A, axis=0)
+
 if __name__ == '__main__':
     Y = np.array([1, 1, 1, 1, 1, 0, 0, 0, 0, 0])
     Ypred = np.array([0.9, 0.8, 0.7, 0.3, 0.2, 0.1, 0.2, 0.3, 0.8, 0.9])
