@@ -310,6 +310,27 @@ class WeightedDemParGan(WeightedGan, DemParGan):
     def _get_weighted_aud_loss(self, L, A_wts, Y_wts, AY_wts):
         return self._weight_loss(L, A_wts, Y_wts, AY_wts)
 
+# ====================================
+# New for RvR
+
+class MultiWeightedDemParGan(WeightedGan, DemParGan):
+    def _weight_loss(self, L, A_wts, Y_wts, AY_wts):
+        A_wts_expand = tf.expand_dims(A_wts, 1)
+        wts = tf.matmul(self.A, A_wts_expand)
+        wtd_L = tf.multiply(L, tf.squeeze(wts))
+
+        return wtd_L
+
+    def _get_weighted_class_loss(self, L, A_wts, Y_wts, AY_wts):
+        return self._weight_loss(L, A_wts, Y_wts, AY_wts)
+
+    def _get_weighted_recon_loss(self, L, A_wts, Y_wts, AY_wts):
+        return self._weight_loss(L, A_wts, Y_wts, AY_wts)
+
+    def _get_weighted_aud_loss(self, L, A_wts, Y_wts, AY_wts):
+        return self._weight_loss(L, A_wts, Y_wts, AY_wts)
+
+
 
 class WeightedEqoddsGan(WeightedDemParGan, EqOddsUnweightedGan):
     def _weight_loss(self, L, A_wts, Y_wts, AY_wts):
@@ -363,6 +384,7 @@ class WeightedEqoddsMultiWassGan(MultiWassGan, WeightedEqoddsGan):
     def _get_aud_loss(self, A_hat, A):
         return MultiWassGan._get_aud_loss(self, A_hat, A)
 
+# ====================================
 
 class WeightedDemParWassGpGan(WeightedDemParWassGan):
     """
