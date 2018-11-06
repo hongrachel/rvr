@@ -9,7 +9,7 @@ def mb_round(t, bs):
  
 
 class Dataset(object):
-    def __init__(self, name, attr0_name, attr1_name, npzfile, seed=0, use_attr=False, load_on_init=True, y2i=None, pred_attr=False, batch_size=None, **kwargs):
+    def __init__(self, name, attr0_name, attr1_name, npzfile, seed=0, use_attr=False, load_on_init=True, y2i=None, pred_attr=False, batch_size=None, multi=-1, **kwargs):
         self.name = name
         self.attr0_name = attr0_name
         self.attr1_name = attr1_name
@@ -17,6 +17,7 @@ class Dataset(object):
         self.use_attr = use_attr
         self.pred_attr = pred_attr
         self.batch_size = batch_size
+        self.multi = multi
 
         self.loaded = False
         self.seed = seed
@@ -102,10 +103,15 @@ class Dataset(object):
                 self.y2_valid = mb_round(self.y2_valid, self.batch_size)
 
     def get_A_proportions(self):
-        A0 = NR(self.attr_train)
-        A1 = PR(self.attr_train)
-        assert A0 + A1 == 1
-        return [A0, A1]
+        if multi == -1:
+            A0 = NR(self.attr_train)
+            A1 = PR(self.attr_train)
+            assert A0 + A1 == 1
+            return [A0, A1]
+        else:
+            props = proportions(self.attr_train)
+            assert np.sum(props) == 1
+            return props
 
     def get_Y_proportions(self):
         Y0 = NR(self.y_train)
@@ -114,12 +120,15 @@ class Dataset(object):
         return [Y0, Y1]
 
     def get_AY_proportions(self):
-        ttl = float(self.y_train.shape[0])
-        A0Y0 = TN(self.y_train, self.attr_train) / ttl
-        A0Y1 = FN(self.y_train, self.attr_train) / ttl
-        A1Y0 = FP(self.y_train, self.attr_train) / ttl
-        A1Y1 = TP(self.y_train, self.attr_train) / ttl
-        return [[A0Y0, A0Y1], [A1Y0, A1Y1]]
+        if multi == -1:
+            ttl = float(self.y_train.shape[0])
+            A0Y0 = TN(self.y_train, self.attr_train) / ttl
+            A0Y1 = FN(self.y_train, self.attr_train) / ttl
+            A1Y0 = FP(self.y_train, self.attr_train) / ttl
+            A1Y1 = TP(self.y_train, self.attr_train) / ttl
+            return [[A0Y0, A0Y1], [A1Y0, A1Y1]]
+        else:
+            return 0 # if we need this for equalized odds loss I will implement this later
 
     def get_batch_iterator(self, phase, mb_size):
         if phase == 'train':
