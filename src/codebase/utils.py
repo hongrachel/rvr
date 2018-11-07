@@ -53,4 +53,6 @@ def get_npz_basename(name, biased, even, **kwargs):
             raise ValueError("even {} dataset not supported".format(name))
         else:
             basename = 'diabetes_edwards_clean.npz'
+    elif name == 'adult_multi':
+        basename = 'adult_multi.npz'
     return basename

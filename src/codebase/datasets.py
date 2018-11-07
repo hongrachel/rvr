@@ -103,7 +103,7 @@ class Dataset(object):
                 self.y2_valid = mb_round(self.y2_valid, self.batch_size)
 
     def get_A_proportions(self):
-        if multi == -1:
+        if self.multi == -1:
             A0 = NR(self.attr_train)
             A1 = PR(self.attr_train)
             assert A0 + A1 == 1
@@ -119,7 +119,7 @@ class Dataset(object):
         return [Y0, Y1]
 
     def get_AY_proportions(self):
-        if multi == -1:
+        if self.multi == -1:
             ttl = float(self.y_train.shape[0])
             A0Y0 = TN(self.y_train, self.attr_train) / ttl
             A0Y1 = FN(self.y_train, self.attr_train) / ttl
