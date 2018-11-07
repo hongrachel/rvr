@@ -110,7 +110,6 @@ class Dataset(object):
             return [A0, A1]
         else:
             props = proportions(self.attr_train)
-            assert np.sum(props) == 1
             return props
 
     def get_Y_proportions(self):
