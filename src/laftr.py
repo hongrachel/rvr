@@ -39,7 +39,7 @@ def main(args):
     if 'Weighted' in args['model']['class']:
         A_weights = [1. / x for x in data.get_A_proportions()]
         Y_weights = [1. / x for x in data.get_Y_proportions()]
-        AY_weights = [[1. / x for x in L] for L in data.get_AY_proportions()]
+        AY_weights = [[1. / x for x in L] for L in data.get_AY_proportions()] if not data.get_AY_proportions() == 0 else 0 # change later
         if 'Eqopp' in args['model']['class']:
             #we only care about ppl with Y = 0 --- those who didn't get sick
             AY_weights[0][1] = 0. #AY_weights[0][1]
