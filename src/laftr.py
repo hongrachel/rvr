@@ -29,7 +29,7 @@ def main(args):
         f.write(opt_dumps)
 
     if args['data']['use_attr']:
-        args['model'].update(xdim=args['model']['xdim']+1)
+        args['model'].update(xdim=args['model']['xdim']+args['model']['adim'])
 
 
     #get dataset
