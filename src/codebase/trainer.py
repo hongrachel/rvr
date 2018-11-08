@@ -99,7 +99,7 @@ class Trainer(object):
             self.batches_seen = 0
             trained_class = 0; trained_aud = 0
             Y_hats_tr = np.empty((0, 1))
-            A_hats_tr = np.empty((0, 1))
+            A_hats_tr = np.empty((0, self.model.adim))
 
             print('Class DP last epoch: {:.3f}; Disc DP Bound last epoch: {:.3f}'.format(class_dp_last_ep, disc_dp_bound_last_ep))
             trained_class_this_epoch = False
@@ -168,8 +168,8 @@ class Trainer(object):
             num_batches = 0
             Y_hats = np.empty((0, 1))
             Ys = np.empty((0, 1))
-            As = np.empty((0, 1))
-            A_hats = np.empty((0, 1))
+            As = np.empty((0, self.model.adim))
+            A_hats = np.empty((0, self.model.adim))
 
             for x, y, a in valid_iter:
                 num_batches += 1
@@ -225,12 +225,13 @@ class Trainer(object):
             summary.value.add(tag="class_err", simple_value=valid_L['class_err'])
             summary.value.add(tag="disc_err", simple_value=valid_L['disc_err'])
 
-            di = DI(Ys, Y_hats, As) * 2
-            print('DI: ', di)
-            summary.value.add(tag="DI", simple_value=di)
-            demo_dispar = DP(Y_hats, As)
-            summary.value.add(tag="DP", simple_value=demo_dispar)
-            print('DP: ', demo_dispar)
+            if self.model.adim == 1:
+                di = DI(Ys, Y_hats, As) * 2
+                print('DI: ', di)
+                summary.value.add(tag="DI", simple_value=di)
+                demo_dispar = DP(Y_hats, As)
+                summary.value.add(tag="DP", simple_value=demo_dispar)
+                print('DP: ', demo_dispar)
 
             if epoch % 50 == 0 and not self.regbas:
                 # Valid set
