@@ -106,7 +106,7 @@ def NLL(Y, Ypred, eps=eps):
     return -np.mean(np.multiply(Y, np.log(Ypred + eps)) + np.multiply(1. - Y, np.log(1 - Ypred + eps)))
 
 def proportions(A):
-    props = np.mean(A, axis = 0)
+    props = np.mean(A, axis=0)
     assert np.isclose(np.sum(props), 1)
     return props
 

@@ -148,7 +148,7 @@ class DemParGan(AbstractBaseNet):
     def _get_recon_inputs(self, latents, scope_name='model/enc_cla'):
         with tf.variable_scope(scope_name):
             mlp = MLP(name='latents_to_reconstructed_inputs',
-                      shapes=[self.zdim + 1] + self.hidden_layer_specs['rec'] + [self.xdim],
+                      shapes=[self.zdim + self.adim] + self.hidden_layer_specs['rec'] + [self.xdim],
                       activ=ACTIV)
             Z_and_A = tf.concat([self.Z, self.A], axis=1)
             final_reps = mlp.forward(Z_and_A)
@@ -370,14 +370,14 @@ class WeightedEqoddsWassGan(WassGan, WeightedEqoddsGan):
 # ====================================
 # New for RvR
 
-class WeightedDemParMultiWassGan(MultiWassGan, WeightedDemParGan):
+class WeightedDemParMultiWassGan(MultiWassGan, MultiWeightedDemParGan):
     def _get_class_loss(self, Y_hat, Y):
         return MultiWassGan._get_class_loss(self, Y_hat, Y)
 
     def _get_aud_loss(self, A_hat, A):
         return MultiWassGan._get_aud_loss(self, A_hat, A)
 
-class WeightedEqoddsMultiWassGan(MultiWassGan, WeightedEqoddsGan):
+class WeightedEqoddsMultiWassGan(MultiWassGan, WeightedEqoddsGan): # should be MultiWeighted Eqodds Gan, not implemented yet
     def _get_class_loss(self, Y_hat, Y):
         return MultiWassGan._get_class_loss(self, Y_hat, Y)
 
@@ -492,11 +492,16 @@ class RegularizedFairClassifier(DemParGan):
             di = 0.5 * (fpdi + fndi)
             return di
 
-        return tf.reduce_mean([
-            self.class_coeff * self.class_loss,
-            0. * self.recon_loss,
-            0. * self.aud_loss
-        ]) + self.fair_coeff * _get_fair_reg(self.Y, self.Y_hat, self.A)
+        if self.fair_coeff > 0:
+            return tf.reduce_mean([
+                self.class_coeff * self.class_loss,
+                0. * self.recon_loss,
+                0. * self.aud_loss
+            ]) + self.fair_coeff * _get_fair_reg(self.Y, self.Y_hat, self.A)
+        else:
+            return tf.reduce_mean([self.class_loss,
+                                   0. * self.class_loss,
+                                   0. *self.class_loss])
 
 
 class RegularizedDPClassifier(RegularizedFairClassifier):
