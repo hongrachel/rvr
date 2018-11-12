@@ -492,16 +492,17 @@ class RegularizedFairClassifier(DemParGan):
             di = 0.5 * (fpdi + fndi)
             return di
 
-        if self.fair_coeff > 0:
+        if self.fair_coeff == 0 and self.adim > 1:
+            new_aud_loss = multi_wass_loss(self.A, self.A_hat)
+            return tf.reduce_mean([self.class_loss,
+                                   0. * self.recon_loss,
+                                   0. * new_aud_loss])
+        else:
             return tf.reduce_mean([
                 self.class_coeff * self.class_loss,
                 0. * self.recon_loss,
                 0. * self.aud_loss
             ]) + self.fair_coeff * _get_fair_reg(self.Y, self.Y_hat, self.A)
-        else:
-            return tf.reduce_mean([self.class_loss,
-                                   0. * self.class_loss,
-                                   0. *self.class_loss])
 
 
 class RegularizedDPClassifier(RegularizedFairClassifier):
