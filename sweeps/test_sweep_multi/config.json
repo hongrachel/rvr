@@ -17,16 +17,16 @@
         "seed": 2
     },
     "train": {
-        "batch_size": 64,
+        "batch_size": 15,
         "regbas": false,
         "aud_steps": 1,
         "n_epochs": 1000,
         "patience": 1000
     },
     "transfer": {
-        "batch_size": 64,
+        "batch_size": 15,
         "n_epochs": 1000,
-        "patience": 100,
+        "patience": 20,
         "y_indices": -1,
         "epoch_number": 0,
         "anneal_length": 0,
