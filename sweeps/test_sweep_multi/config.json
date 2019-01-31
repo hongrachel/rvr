@@ -17,14 +17,14 @@
         "seed": 2
     },
     "train": {
-        "batch_size": 15,
+        "batch_size": 25,
         "regbas": false,
         "aud_steps": 1,
         "n_epochs": 1000,
         "patience": 1000
     },
     "transfer": {
-        "batch_size": 15,
+        "batch_size": 25,
         "n_epochs": 1000,
         "patience": 20,
         "y_indices": -1,
