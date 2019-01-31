@@ -55,4 +55,6 @@ def get_npz_basename(name, biased, even, **kwargs):
             basename = 'diabetes_edwards_clean.npz'
     elif name == 'adult_multi':
         basename = 'adult_multi.npz'
+    elif name == 'run0':
+        basename = 'run0.npz'
     return basename
