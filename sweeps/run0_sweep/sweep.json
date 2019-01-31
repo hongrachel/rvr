@@ -1,0 +1,26 @@
+{
+    "sweep_name": "test_sweep_multi_2",
+    "script": ["src/run_laftr.py", "src/run_unf_clf.py"],
+    "config": "sweeps/test_sweep_multi/config.json",
+    "n_proc": 15,
+    "xargs": false,
+    "exclude_guppies": "guppy9,guppy10,guppy18,guppy25,guppy13,guppy22 ",
+    "partition": "gpuc",
+    "templates": {
+        "data": ["adult_multi"],
+        "dirs": "local"
+    },
+    "overrides": {
+        "model": {
+            "fair_coeff": [0.0, 0.5, 1.0, 2.0, 4.0, 6.0, 10.0, 20.0, 40.0],
+            "class": ["WeightedDemParMultiWassGan"],
+            "adim": [10]
+        },
+        "transfer": {
+            "epoch_number": [0, 50, 100, 200, 500, 900],
+            "repr_phase": ["Test", "Valid"],
+           "model_seed": [1,2,3]
+        }
+    }
+}
+
