@@ -1,13 +1,13 @@
 {
-    "sweep_name": "test_sweep_multi_2",
+    "sweep_name": "run0_sweep",
     "script": ["src/run_laftr.py", "src/run_unf_clf.py"],
-    "config": "sweeps/test_sweep_multi/config.json",
+    "config": "sweeps/run0_sweep/config.json",
     "n_proc": 15,
     "xargs": false,
     "exclude_guppies": "guppy9,guppy10,guppy18,guppy25,guppy13,guppy22 ",
     "partition": "gpuc",
     "templates": {
-        "data": ["adult_multi"],
+        "data": ["run0"],
         "dirs": "local"
     },
     "overrides": {
