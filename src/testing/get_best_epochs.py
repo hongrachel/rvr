@@ -1,6 +1,8 @@
 import numpy as np
 import os
-from testing.find_test_result import get_ckpt_stats, loss
+import sys
+sys.path.append("/Users/Frances/Documents/seas-fellowship/rvr/src/")
+from testing.find_test_result import get_ckpt_stats, loss, loss_subset
 
 BIG = 99999.
 
@@ -49,6 +51,26 @@ def get_best_epoch(expdir, fairkey, lamda):
 
     return best_epoch, best_fair
 
+def get_best_epoch_erry(expdir):
+    bigdir= os.path.join(expdir, 'checkpoints')
+
+    ckpt_names = os.listdir(bigdir)
+    valid_ckpt_names = filter(lambda s: 'Valid' in s, ckpt_names)
+
+    best_err = BIG
+    best_epoch = -1
+
+    for d in valid_ckpt_names:
+        dname = os.path.join(bigdir, d)
+        stats = get_ckpt_stats(dname)
+        err, classce, discce = loss_subset(stats)
+        if err < best_err:
+            ep = int(d.split('_')[1])
+            best_err = err
+            best_epoch = ep
+
+    return best_epoch, best_err
+
 def write_best_epochs(fname, best_eps, lamda):
     f = open(fname, 'w')
     f.write('Lamda,{:.3f}\n'.format(lamda))
@@ -59,6 +81,9 @@ def write_best_epochs(fname, best_eps, lamda):
     f.close()
 
 if __name__ == '__main__':
+
+    # Original from DM, EC:
+    '''
     # expdirs = ['/ais/gobi5/madras/adv-fair-reps/experiments/health_eqopp_whw_fc6_ua_2']
     expdir = '/ais/gobi5/madras/adv-fair-reps/experiments/'
     dp_dirs = ['adult_dempar_whw_fc{}'.format(num2str(gamma)) \
@@ -76,6 +101,7 @@ if __name__ == '__main__':
     expdirs = [os.path.join(expdir, d) for d in dp_dirs + eqodds_dirs + eqopp_dirs]
     fmets = ['DP', 'DI', 'DI_FP', 'ErrA']
     lamda = 1.
+    
     # somehow loop over all runs
     for d in expdirs:
         # for each fairness metric
@@ -86,7 +112,18 @@ if __name__ == '__main__':
         fname = os.path.join(d, 'best_validation_fairness.txt')
         write_best_epochs(fname, best_eps, lamda)
         print('Wrote metrics to {}'.format(fname))
+    
+    '''
 
+    expdir = '/Users/Frances/Documents/seas-fellowship/rvr/experiments/'
+    run0_dirs = ['run0_sweep/data--run0--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}'.format(gamma) \
+                 for gamma in ['0_0', '0_5', '1_0', '2_0', '4_0', '6_0', '10_0', '20_0', '40_0']]
+    expdirs = [os.path.join(expdir, d) for d in run0_dirs]
+
+    for d in expdirs:
+        best_epoch, best_err = get_best_epoch_erry(d)
+        print(d)
+        print(best_epoch, best_err)
 
 
 

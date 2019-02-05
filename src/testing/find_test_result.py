@@ -27,6 +27,13 @@ def loss(stats, coeff, key, unsup):
     l = err + coeff * fair
     return l, err, fair, di, dp, difp
 
+def loss_subset(stats):
+    err = stats['ErrY']
+    classce = stats['ClassCE']
+    discce = stats['DiscCE']
+
+    return err, classce, discce
+
 def get_filter_function(filters):
     def f(D):
         res = True
