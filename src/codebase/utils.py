@@ -56,5 +56,7 @@ def get_npz_basename(name, biased, even, **kwargs):
     elif name == 'adult_multi':
         basename = 'adult_multi.npz'
     elif name == 'run0':
-        basename = 'run0.npz'
+        basename = 'run0_v2.npz'
+    elif name == 'runhet':
+        basename = 'run_het.npz'
     return basename

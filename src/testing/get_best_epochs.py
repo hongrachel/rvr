@@ -1,4 +1,5 @@
 import numpy as np
+import itertools
 import os
 import sys
 sys.path.append("/Users/Frances/Documents/seas-fellowship/rvr/src/")
@@ -116,14 +117,48 @@ if __name__ == '__main__':
     '''
 
     expdir = '/Users/Frances/Documents/seas-fellowship/rvr/experiments/'
-    run0_dirs = ['run0_sweep/data--run0--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}'.format(gamma) \
-                 for gamma in ['0_0', '0_5', '1_0', '2_0', '4_0', '6_0', '10_0', '20_0', '40_0']]
-    expdirs = [os.path.join(expdir, d) for d in run0_dirs]
+    #run0_dirs = ['run0_sweep/data--run0--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}'.format(gamma) \
+    #             for gamma in ['0_0', '0_5', '1_0', '2_0', '4_0', '6_0', '10_0', '20_0', '40_0']]
+    #runhet_dir = 'runhet_sweep/data--runhet--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}'
+    #runhet_dirs = [runhet_dir.format(gamma) for gamma in \
+    #               ['0_0', '0_005', '0_01', '0_05', '0_1', '0_2', '0_5', '1_0', '2_0', '4_0', '6_0', '8_0', '10_0', '20_0', '50_0', '100_0']]
+    #expdirs = [os.path.join(expdir, d) for d in runhet_dirs]
 
-    for d in expdirs:
+    #run0_v2_dirs = ['run0_sweep_v2_no_attr/data--run0--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}'.format(gamma) \
+    #             for gamma in ['0_0', '0_5', '1_0', '2_0', '4_0', '6_0', '8_0', '10_0', '20_0', '50_0', '100_0']]
+
+    #expdirs = [os.path.join(expdir, d) for d in run0_v2_dirs]
+
+
+
+    coeffs = ['0_0', '0_005', '0_01', '0_05', '0_1', '0_2', '0_5', '1_0', '2_0', '4_0', '6_0', '10_0']
+
+    runhet_dir = 'runhet_sweep/data--runhet--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}'
+
+    runhet_recon_dir = 'runhet_recon_sweep/data--runhet--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}--model_recon_coeff-{}'
+    runhet_recon_dirs = [(runhet_recon_dir.format(gamma, beta), gamma, beta) for gamma, beta in itertools.product(coeffs, coeffs)]
+
+    expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runhet_recon_dirs]
+
+    score_mat = []
+
+    for d, gamma, beta in expdirs:
         best_epoch, best_err = get_best_epoch_erry(d)
-        print(d)
-        print(best_epoch, best_err)
+        #print(d)
+        #print(best_epoch, best_err)
+        testdir = d + '/checkpoints/Epoch_{}_Test/'.format(best_epoch)
+        teststats = get_ckpt_stats(testdir)
+        err, classce, discce = loss_subset(teststats)
+        #print(d[-5:])
+        #print('Gamma: {} Beta: {}'.format(gamma, beta))
+        #print(err, classce, discce)
+        score_mat.append(err)
+
+    score_mat = np.reshape(np.array(score_mat), (len(coeffs), -1))
+
+    print(score_mat)
+
+    np.save('runhet_recon_sweep_score_mat.npy', score_mat)
 
 
 

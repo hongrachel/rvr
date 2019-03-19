@@ -1,5 +1,5 @@
 {
-    "sweep_name": "run0_sweep_no_attr",
+    "sweep_name": "run0_sweep_v2_no_attr",
     "script": ["src/run_laftr.py", "src/run_unf_clf.py"],
     "config": "sweeps/run0_sweep/config.json",
     "n_proc": 15,
