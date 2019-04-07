@@ -3,7 +3,9 @@ import itertools
 import os
 import sys
 sys.path.append("/Users/Frances/Documents/seas-fellowship/rvr/src/")
-from testing.find_test_result import get_ckpt_stats, loss, loss_subset
+sys.path.append("~/rvr/src/")
+sys.path.append("~/rvr/src/testing/")
+from find_test_result import get_ckpt_stats, loss, loss_subset
 
 BIG = 99999.
 
@@ -116,7 +118,13 @@ if __name__ == '__main__':
     
     '''
 
-    expdir = '/Users/Frances/Documents/seas-fellowship/rvr/experiments/'
+    on_laptop = False
+    if on_laptop:
+        expdir = '/Users/Frances/Documents/seas-fellowship/rvr/experiments/'
+    else:
+        expdir = '~/rvr/experiments/'
+
+
     #run0_dirs = ['run0_sweep/data--run0--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}'.format(gamma) \
     #             for gamma in ['0_0', '0_5', '1_0', '2_0', '4_0', '6_0', '10_0', '20_0', '40_0']]
     #runhet_dir = 'runhet_sweep/data--runhet--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}'
@@ -130,15 +138,26 @@ if __name__ == '__main__':
     #expdirs = [os.path.join(expdir, d) for d in run0_v2_dirs]
 
 
-
+    # Runhet_recon sweeps
+    '''
     coeffs = ['0_0', '0_005', '0_01', '0_05', '0_1', '0_2', '0_5', '1_0', '2_0', '4_0', '6_0', '10_0']
 
     runhet_dir = 'runhet_sweep/data--runhet--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}'
 
     runhet_recon_dir = 'runhet_recon_sweep/data--runhet--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}--model_recon_coeff-{}'
     runhet_recon_dirs = [(runhet_recon_dir.format(gamma, beta), gamma, beta) for gamma, beta in itertools.product(coeffs, coeffs)]
+    '''
 
-    expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runhet_recon_dirs]
+    #coeffs = [0.0, 0.001, 0.005, 0.01, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 1.0, 4.0]
+
+    coeffs = ['0_0', '0_001', '0_005', '0_01', '0_05', '0_1', '0_15', '0_2', '0_3', '0_5', '1_0', '4_0']
+
+    runp_dir = 'runp1_2_sweep_dp/data--runp1_2--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}--model_recon_coeff-{}'
+    runp_dirs = [(runp_dir.format(gamma, beta), gamma, beta) for gamma, beta in itertools.product(coeffs, coeffs)]
+
+
+
+    expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runp_dirs]
 
     score_mat = []
 
@@ -158,7 +177,16 @@ if __name__ == '__main__':
 
     print(score_mat)
 
-    np.save('runhet_recon_sweep_score_mat.npy', score_mat)
+    np.save('runp_1_2_sweep_dp_score_mat.npy', score_mat)
+
+    save_csv = False
+    if save_csv:
+        import csv
+
+        with open('runhet_recon_results.csv', mode='w') as f:
+            writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            for row in score_mat:
+                writer.writerow(row)
 
 
 

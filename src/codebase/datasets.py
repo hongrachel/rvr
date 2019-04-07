@@ -127,7 +127,16 @@ class Dataset(object):
             A1Y1 = TP(self.y_train, self.attr_train) / ttl
             return [[A0Y0, A0Y1], [A1Y0, A1Y1]]
         else:
-            return 0 # if we need this for equalized odds loss I will implement this later
+            return 0
+            """ 
+            ttl = float(self.y_train.shape[0])
+
+            result = np.zeros((self.multi, 2))
+            for row in range(self.multi):
+                result[row, 0] = FP(self.y_train, self.attr_train[:, row]) / ttl
+                result[row, 1] = TP(self.y_train, self.attr_train[:, row]) / ttl
+
+            return result """ # just implemented, should test
 
     def get_batch_iterator(self, phase, mb_size):
         if phase == 'train':

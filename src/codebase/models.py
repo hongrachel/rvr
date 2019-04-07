@@ -226,7 +226,7 @@ class WassGanNoSig(WassGan):
 # =========================================
 
 class MultiWassGan(AbstractBaseNet):
-    """Uses multiclass Wasserstein loss function"""
+    """Uses multiclass Wasserstein loss function for the adversary"""
     def _get_class_loss(self, Y_hat, Y):
         return wass_loss(Y, Y_hat)
 
@@ -249,6 +249,14 @@ class EqOddsUnweightedWassGan(WassGan, EqOddsUnweightedGan):
 
     def _get_aud_loss(self, A_hat, A):
         return WassGan._get_aud_loss(self, A_hat, A)
+
+class MultiEqOddsUnweightedWassGan(MultiWassGan, EqOddsUnweightedGan): # We'll use the unweighted one actually
+    """Like MultiWassGan, but auditor gets to use the label Y as well"""
+    def _get_class_loss(self, Y_hat, Y):
+        return MultiWassGan._get_class_loss(self, Y_hat, Y)
+
+    def _get_aud_loss(self, A_hat, A):
+        return MultiWassGan._get_aud_loss(self, A_hat, A)
 
 
 class WeightedGan(AbstractBaseNet):
@@ -294,11 +302,13 @@ class WeightedGan(AbstractBaseNet):
 
 
 class WeightedDemParGan(WeightedGan, DemParGan):
+    # these weighted functions are never called!!!!!!!! this model doesn't do anything weighted??
     def _weight_loss(self, L, A_wts, Y_wts, AY_wts):
         A0_wt = A_wts[0]
         A1_wt = A_wts[1]
         wts = A0_wt * (1. - self.A) + A1_wt * self.A
         wtd_L = tf.multiply(L, tf.squeeze(wts))
+        #print("========\n=============\nHERE WE ARE USING THE WEIGHTED LOSS=========\n===========")
         return wtd_L
 
     def _get_weighted_class_loss(self, L, A_wts, Y_wts, AY_wts):
@@ -329,6 +339,10 @@ class MultiWeightedDemParGan(WeightedGan, DemParGan):
 
     def _get_weighted_aud_loss(self, L, A_wts, Y_wts, AY_wts):
         return self._weight_loss(L, A_wts, Y_wts, AY_wts)
+
+#class MultiWeightedEqOddsWassGan(WeightedGan,  MultiEqOddsUnweightedWassGan):
+    #def _weight_loss(self, L, A_wts, Y_wts, AY_wts):
+        # modify from below
 
 
 
@@ -377,12 +391,12 @@ class WeightedDemParMultiWassGan(MultiWassGan, MultiWeightedDemParGan):
     def _get_aud_loss(self, A_hat, A):
         return MultiWassGan._get_aud_loss(self, A_hat, A)
 
-class WeightedEqoddsMultiWassGan(MultiWassGan, WeightedEqoddsGan): # should be MultiWeighted Eqodds Gan, not implemented yet
+"""class WeightedEqoddsMultiWassGan(MultiWassGan, MultiWeightedEqoddsGan): # should be MultiWeighted Eqodds Gan, not implemented yet
     def _get_class_loss(self, Y_hat, Y):
         return MultiWassGan._get_class_loss(self, Y_hat, Y)
 
     def _get_aud_loss(self, A_hat, A):
-        return MultiWassGan._get_aud_loss(self, A_hat, A)
+        return MultiWassGan._get_aud_loss(self, A_hat, A)"""
 
 # ====================================
 
