@@ -1,5 +1,5 @@
 {
-    "sweep_name": "runp1_2_sweep_eo",
+    "sweep_name": "runp1_2_sweep_eo_040819",
     "script": ["src/run_laftr.py", "src/run_unf_clf.py"],
     "config": "sweeps/runp1_2_sweep/config.json",
     "n_proc": 15,
