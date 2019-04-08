@@ -1,0 +1,26 @@
+{
+    "sweep_name": "runhet_sweep",
+    "script": ["src/run_laftr.py", "src/run_unf_clf.py"],
+    "config": "sweeps/runhet_sweep/config.json",
+    "n_proc": 15,
+    "xargs": false,
+    "exclude_guppies": "guppy9,guppy10,guppy18,guppy25,guppy13,guppy22 ",
+    "partition": "gpuc",
+    "templates": {
+        "data": ["runhet"],
+        "dirs": "local"
+    },
+    "overrides": {
+        "model": {
+            "fair_coeff": [0.0, 0.005, 0.01, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 4.0, 6.0, 8.0, 10.0, 20.0, 50.0, 100.0],
+            "class": ["WeightedDemParMultiWassGan"],
+            "adim": [10]
+        },
+        "transfer": {
+            "epoch_number": [900],
+            "repr_phase": ["Test", "Valid"],
+           "model_seed": [1]
+        }
+    }
+}
+
