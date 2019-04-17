@@ -51,14 +51,14 @@ library(reticulate)
 library(MASS)
 
 # Set parameters for run
-N <- 11 # Total number of studies
-K <- 10 # number of training studies
+N <- 5 # Total number of studies
+K <- 4 # number of training studies
 nk <- rep(5000,N) # number of observations per study, currently all same
 p <- 30 # number of covariates
 p_c <- 20 # number of common covariates
 eps <- 0.1 # window size for common covariates
-eta <- 0.5 # window size for non-comman covariates
-beta_min <- 1.5 # beta window minimum
+eta <- 2 # window size for non-comman covariates
+beta_min <- 1 # beta window minimum
 beta_max <- 5 # beta window maximum
 
 # covariate means
@@ -107,7 +107,7 @@ attr_test[,1] <- rep(1, nrow(x_test))
 x_train <- as.matrix(x_train)
 x_test <- as.matrix(x_test)
 
-outfile <- "run_p1_p5_040719.npz"
+outfile <- "run_p1_2_041719.npz"
 np <- import("numpy")
 np$savez(outfile, x_train = as.matrix(x_train), x_test = as.matrix(x_test), y_train = y_train,
 			y_test = y_test, attr_train = attr_train, attr_test = attr_test,
