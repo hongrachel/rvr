@@ -10,12 +10,13 @@ out=${base}${sweep}"/array_commands/"
 
 count=0
 subcount=0
+numcommands=2
 
 while IFS= read -r line
 do
 	echo $line >> $out$count.sh
 	let "subcount++"
-	if [ $subcount = 5 ]; then
+	if [ $subcount = $numcommands ]; then
 	    let "count++"
 	    subcount=0
 	fi
