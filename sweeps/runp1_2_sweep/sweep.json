@@ -15,7 +15,7 @@
             "fair_coeff":  [0.0, 0.001, 0.01, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 1.0],
             "recon_coeff": [0.0, 0.001, 0.01, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 1.0],
             "class": ["MultiEqOddsUnweightedWassGan"],
-            "adim": [10]
+            "adim": [4]
         },
         "transfer": {
             "epoch_number": [900],
