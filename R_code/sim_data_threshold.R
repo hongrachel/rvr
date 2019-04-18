@@ -8,14 +8,16 @@
 # eta - perturbation level for heterogeneous covariates
 # beta_min - minimum for beta window
 # beta_max - maximum for beta window
+# T - common covariate threshold
+# rk - label base rate
 
 # Beta are generated from [-beta_max, -beta_min] U [beta_min, beta_max]
 # for beta_k in p_c, the study-specific beta_k is taken from [beta_k - eps, beta_k + eps]
 # for beta_k not in p_c, the study-spceific beta_k is taken from [beta_k - eta, beta_k + eta]
 
-MultiStudySim <- function(K, nk, p, p_c, mu, SIGMA, eps, eta, beta_min, beta_max){
+MultiStudyThresh <- function(K, nk, p, p_c, mu, SIGMA, eps, eta, beta_min, beta_max, T, r_k){
 	# Generate X matrices
-	x_vec_list <- lapply(1:K,function(x) mvrnorm(n = nk[x], mu[x,], SIG))
+	# x_vec_list <- lapply(1:K,function(x) mvrnorm(n = nk[x], mu[x,], SIG))
 
 	# indices of 'common features'
 	c_idx <- sample(1:p, p_c)
@@ -31,34 +33,67 @@ MultiStudySim <- function(K, nk, p, p_c, mu, SIGMA, eps, eta, beta_min, beta_max
 		bvtmp[-c_idx] <- sapply(bvtmp[-c_idx], function(z){runif(1, z - eta, z + eta)})
 		bvtmp
 	})
+	
+	# Studies will be matrices with the first column as the outcome and the
+	# rest as covariates
 
-	# Outcome model with logit link
-	output_Y_list <- lapply(1:K,function(x){
-		xb <- x_vec_list[[x]]%*%beta_vec_list[[x]]
-		z <- 1/(1 + exp(-xb))
-		rbinom(length(z), 1, z)	
-	})
+	study_list <- list()
+	# Rejection sampling for common covariates
+	for(i in 1:K){
+		cur_study <- matrix(0, nk[i], p + 1)
+		colnames(cur_study) <- c("Y", paste0("V", 1:p))
 
+		inum <- r_k * nk[i] # How many labels == 1
+		yk <- sample(c(rep(1,inum), rep(0, nk[i] - inum))) 
+
+		for(j in 1:nk[i]){
+
+			# common features
+			thresh <- FALSE
+			while(!thresh) {
+				xtmp <- mvrnorm(1, mu[x,], SIG)
+				lc_com <- beta_vec_list[[i]][c_idx] %*% xtmp[c_idx]
+				thresh <- ifelse(yk[j] == 1, lc_com > T, lc_com <= T)
+			}
+			cur_study[j,] <- c(yk[j], xtmp)
+
+			# uncommon features
+			thresh <- FALSE
+			while(!thresh) {
+				xtmp <- mvrnorm(1, mu[x,], SIG)
+				lc_com <- beta_vec_list[[i]][-c_idx] %*% xtmp[-c_idx]
+				thresh <- ifelse(yk[j] == 1, lc_com > T, lc_com <= T)
+			}
+			cur_study[j,-c_idx] <- c(yk[j], xtmp[-c_idx])
+
+		}
+		study_list[[i]] <- cur_study
+	}
+	
 	# List of final data and beta values should we want to check them
-	final_data <- lapply(1:K,function(x) list(SimulatedOutput=data.frame(x_vec_list[[x]],y=output_Y_list[[x]],row.names = c(1:length(output_Y_list[[x]]))),
+	#final_data <- lapply(1:K,function(x) list(SimulatedOutput=data.frame(x_vec_list[[x]],y=output_Y_list[[x]],row.names = c(1:length(output_Y_list[[x]]))),
 				   BetaValue=beta_vec_list[[x]]))
   
-	names(final_data) <- paste0('Study',c(1:K))
-	return(final_data)
+	#names(final_data) <- paste0('Study',c(1:K))
+	#return(final_data)
+
+	study_list
 }
+
+# Copied over from sim_data_perturb
 
 library(reticulate)
 library(MASS)
 
 # Set parameters for run
-N <- 5 # Total number of studies
-K <- 4 # number of training studies
+N <- 11 # Total number of studies
+K <- 10 # number of training studies
 nk <- rep(5000,N) # number of observations per study, currently all same
 p <- 30 # number of covariates
 p_c <- 20 # number of common covariates
 eps <- 0.1 # window size for common covariates
-eta <- 2 # window size for non-comman covariates
-beta_min <- 1 # beta window minimum
+eta <- 0.5 # window size for non-comman covariates
+beta_min <- 1.5 # beta window minimum
 beta_max <- 5 # beta window maximum
 
 # covariate means
@@ -107,7 +142,7 @@ attr_test[,1] <- rep(1, nrow(x_test))
 x_train <- as.matrix(x_train)
 x_test <- as.matrix(x_test)
 
-outfile <- "run_p1_2_041719.npz"
+outfile <- "run_p1_p5_040719.npz"
 np <- import("numpy")
 np$savez(outfile, x_train = as.matrix(x_train), x_test = as.matrix(x_test), y_train = y_train,
 			y_test = y_test, attr_train = attr_train, attr_test = attr_test,
