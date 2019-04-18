@@ -157,8 +157,12 @@ if __name__ == '__main__':
     runp_dirs = [(runp_dir.format(gamma, beta), gamma, beta) for gamma, beta in itertools.product(coeffs, coeffs)]
 
 
+    runagree_dir = 'runagree_p1_2_sweep_eo_041719/data--runagree--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}'
+    runagree_dirs = [(runagree_dir.format(gamma, beta), gamma, beta) for gamma, beta in itertools.product(coeffs, coeffs)]
 
-    expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runp_dirs]
+
+    #expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runp_dirs]
+    expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runagree_dirs]
 
     score_mat = []
 
