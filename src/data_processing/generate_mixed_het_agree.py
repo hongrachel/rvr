@@ -142,26 +142,30 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, outfil
         print(x_vec_out)"""
 
 
-
-    #print(c_idx)
-    #print(beta_vec_list)
+    # make y vectors 2-D
     y_train = np.expand_dims(y_train, 1)
     y_train_expand = np.concatenate((1 - y_train, y_train), axis=1)
     y_test = np.expand_dims(y_test, 1)
     y_test_expand = np.concatenate((1 - y_test, y_test), axis=1)
 
+    # create attr matrices
     ind = np.repeat(0, nk[0])
     for i in range(1, k-1):
         ind = np.concatenate((ind, np.repeat(i, nk[i])), axis=0)
-    print(ind)
     attr_train = np.zeros((ind.size, ind.max()+1))
     attr_train[np.arange(ind.size), ind] = 1
-    print(attr_train)
     attr_test = np.concatenate( (np.ones((int(nk[-1]), 1)), np.zeros((int(nk[-1]), k-2))), axis=1)
-    print(attr_test)
 
+    # create train and valid inds
+    numtrainidx = int(0.8 * x_train.shape[0])
+    shuffled = np.random.permutation(np.arange(x_train.shape[0]))
+    train_inds = shuffled[:numtrainidx]
+    valid_inds = shuffled[numtrainidx:]
+
+    # save outfile
     np.savez(outfile, x_train=x_train, x_test=x_test, y_train=y_train_expand, y_test=y_test_expand,
-             attr_train=attr_train, attr_test=attr_test, c_idx=c_idx)
+             attr_train=attr_train, attr_test=attr_test, train_inds=train_inds, valid_inds=valid_inds,
+             c_idx=c_idx, beta_vec_list=beta_vec_list)
 
 
 
@@ -172,9 +176,9 @@ if __name__ == '__main__':
 
     # Set parameters for run
     np.random.seed(0)
-    K = 4 # Total number of studies
+    K = 5 # Total number of studies
     K_train = K-1 # number of training studies
-    nk = np.ones(K)*10 #5000 # number of observations per study, currently all same
+    nk = np.ones(K)*5000 #5000 # number of observations per study, currently all same
     p = 30 # number of covariates
     p_c = 7 # number of common covariates
     eps = 0.1 # window size for common covariates
