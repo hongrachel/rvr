@@ -4,7 +4,7 @@ import os
 import sys
 sys.path.append("/Users/Frances/Documents/seas-fellowship/rvr/src/")
 sys.path.append("~/rvr/src/")
-sys.path.append("~/rvr/src/testing/")
+sys.path.append("/n/home06/fding/rvr/src/testing/")
 from find_test_result import get_ckpt_stats, loss, loss_subset
 
 BIG = 99999.
@@ -122,7 +122,7 @@ if __name__ == '__main__':
     if on_laptop:
         expdir = '/Users/Frances/Documents/seas-fellowship/rvr/experiments/'
     else:
-        expdir = '~/rvr/experiments/'
+        expdir = '/n/home06/fding/rvr/experiments/'
 
 
     #run0_dirs = ['run0_sweep/data--run0--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}'.format(gamma) \
@@ -152,7 +152,8 @@ if __name__ == '__main__':
 
     coeffs = ['0_0', '0_001', '0_005', '0_01', '0_05', '0_1', '0_15', '0_2', '0_3', '0_5', '1_0', '4_0']
 
-    runp_dir = 'runp1_2_sweep_dp/data--runp1_2--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}--model_recon_coeff-{}'
+#    runp_dir = 'runp1_2_sweep_dp/data--runp1_2--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}--model_recon_coeff-{}'
+    runp_dir = 'runp1_2_sweep_eo_040819/data--runp1_2--model_adim-10--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}'
     runp_dirs = [(runp_dir.format(gamma, beta), gamma, beta) for gamma, beta in itertools.product(coeffs, coeffs)]
 
 
@@ -177,7 +178,7 @@ if __name__ == '__main__':
 
     print(score_mat)
 
-    np.save('runp_1_2_sweep_dp_score_mat.npy', score_mat)
+    np.save('runp_1_2_sweep_eo_040819_score_mat.npy', score_mat)
 
     save_csv = False
     if save_csv:

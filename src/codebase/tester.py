@@ -174,6 +174,7 @@ class Tester(object):
             metD['ErrY'] = err
             metD['A=?_BasePR'] = PR(Y)
             metD['A=?_BaseNR'] = NR(Y)
+            metD['Recon'] = test_L['recon']
 
         self.reslogger.save_metrics(metD)
         if save:
