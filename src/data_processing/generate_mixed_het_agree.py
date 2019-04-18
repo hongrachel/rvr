@@ -36,7 +36,7 @@ def compute_label(x_vec, beta_vec):
     out = np.random.binomial(1, z, len(z))
     return out
 
-def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max):
+def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, outfile):
 
     # generate common features
     c_idx = np.random.choice(range(p), size=p_c, replace=False) # indices of common features
@@ -95,9 +95,19 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max):
                 negcount += 1
 
         x_vec_out = np.concatenate((x_vec_pos, x_vec_neg), axis=0)
-        print(x_vec_out)
+        #print(x_vec_out)
         y_vec = np.concatenate((np.ones(numpos), np.zeros(numneg)))
-        print(y_vec)
+        #print(y_vec)
+
+        if i == 0:
+            x_train = x_vec_out
+            y_train = y_vec
+        elif i < k - 1:
+            x_train = np.concatenate((x_train, x_vec_out), axis=0)
+            y_train = np.concatenate((y_train, y_vec), axis=0)
+        else:
+            x_test = x_vec_out
+            y_test = y_vec
         """x_vec = np.random.multivariate_normal(mean=mu[i], cov=sig, size=int(4*nk[i])) # 4x as many datapoints as needed
         y_vec = compute_label(x_vec[:, c_idx], beta_vec_list[i, c_idx]) # labels based on common features
         print(beta_vec_list[i])
@@ -130,9 +140,20 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max):
 
     #print(c_idx)
     #print(beta_vec_list)
+    y_train = np.expand_dims(y_train, 1)
+    y_train_expand = np.concatenate((1 - y_train, y_train), axis=1)
+    y_test = np.expand_dims(y_test, 1)
+    y_test_expand = np.concatenate((1 - y_test, y_test), axis=1)
+
+    np.savez(outfile, x_train=x_train, x_test=x_test, y_train=y_train_expand, y_test=y_test_expand, )
+
+
 
 
 if __name__ == '__main__':
+    # Save file name:
+    outfile = 'run_agree_p1_2_041719'
+
     # Set parameters for run
     np.random.seed(0)
     N = 3 # Total number of studies
@@ -155,4 +176,5 @@ if __name__ == '__main__':
     arb = np.random.uniform(-1, 1, size=p*p).reshape((p, p))
     sig = arb.T @ arb
 
-    multi_study_sim(k=N, nk=nk, p=p, p_c=p_c, mu=mu, sig=sig, eps=eps, eta=eta, beta_min=beta_min, beta_max=beta_max)
+    multi_study_sim(k=N, nk=nk, p=p, p_c=p_c, mu=mu, sig=sig, eps=eps, eta=eta, beta_min=beta_min, beta_max=beta_max,
+                    outfile=outfile)
