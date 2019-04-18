@@ -31,9 +31,15 @@ def perturb_betas(beta_vec, k, c_idx, eps, eta):
             out[:, i] = np.random.uniform(beta_vec[i] - eta, beta_vec[i] + eta, size=k)
     return out
 
-def compute_label(x_vec, beta_vec):
-    z = 1.0 / (1 + np.exp(-(x_vec @ beta_vec)))
-    out = np.random.binomial(1, z, len(z))
+def compute_label(x_vec, beta_vec, exact=False):
+    if exact:
+        if x_vec @ beta_vec > 0:
+            return 1
+        else:
+            return 0
+    else:
+        z = 1.0 / (1 + np.exp(-(x_vec @ beta_vec)))
+        out = np.random.binomial(1, z, len(z))
     return out
 
 def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, outfile):
@@ -70,9 +76,12 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, outfil
         x_vec_pos = np.zeros((numpos, p))
         while poscount < numpos:
             x_vec = np.random.multivariate_normal(mean=mu[i], cov=sig, size=1)
-            y = compute_label(x_vec[:,c_idx], beta_vec_list[i, c_idx]) #find label from common features
 
-            y_uncommon = compute_label(x_vec[:,non_c_idx], beta_vec_list[i, non_c_idx]) #check if uncommon features agree
+            # find label from common features
+            y = compute_label(x_vec=x_vec[:,c_idx], beta_vec=beta_vec_list[i, c_idx])
+
+            # check if uncommon features agree
+            y_uncommon = compute_label(x_vec=x_vec[:,non_c_idx], beta_vec=beta_vec_list[i, non_c_idx], exact=True)
             totalcount += 1
 
             if (y == 1 and y_uncommon == 1): # if both agree on positive, add to vector
@@ -85,9 +94,12 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, outfil
         x_vec_neg = np.zeros((numneg, p))
         while negcount < numneg:
             x_vec = np.random.multivariate_normal(mean=mu[i], cov=sig, size=1)
-            y = compute_label(x_vec[:, c_idx], beta_vec_list[i, c_idx]) #find label from common features
 
-            y_uncommon = compute_label(x_vec[:, non_c_idx], beta_vec_list[i, non_c_idx]) #check if uncommon features agree
+            # find label from common features
+            y = compute_label(x_vec=x_vec[:, c_idx], beta_vec=beta_vec_list[i, c_idx])
+
+            # check if uncommon features agree
+            y_uncommon = compute_label(x_vec=x_vec[:, non_c_idx], beta_vec=beta_vec_list[i, non_c_idx], exact=True)
             totalcount += 1
 
             if (y == 0 and y_uncommon == 0): # if both agree on positive, add to vector
@@ -95,17 +107,15 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, outfil
                 negcount += 1
 
         x_vec_out = np.concatenate((x_vec_pos, x_vec_neg), axis=0)
-        #print(x_vec_out)
         y_vec = np.concatenate((np.ones(numpos), np.zeros(numneg)))
-        #print(y_vec)
 
-        if i == 0:
+        if i == 0: # if first study, save as final file
             x_train = x_vec_out
             y_train = y_vec
-        elif i < k - 1:
+        elif i < k - 1: # if further training studies, concatenate
             x_train = np.concatenate((x_train, x_vec_out), axis=0)
             y_train = np.concatenate((y_train, y_vec), axis=0)
-        else:
+        else: # last study is test study
             x_test = x_vec_out
             y_test = y_vec
         """x_vec = np.random.multivariate_normal(mean=mu[i], cov=sig, size=int(4*nk[i])) # 4x as many datapoints as needed
@@ -133,11 +143,6 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, outfil
 
 
 
-
-        #print(x_vec)
-
-
-
     #print(c_idx)
     #print(beta_vec_list)
     y_train = np.expand_dims(y_train, 1)
@@ -145,7 +150,18 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, outfil
     y_test = np.expand_dims(y_test, 1)
     y_test_expand = np.concatenate((1 - y_test, y_test), axis=1)
 
-    np.savez(outfile, x_train=x_train, x_test=x_test, y_train=y_train_expand, y_test=y_test_expand, )
+    ind = np.repeat(0, nk[0])
+    for i in range(1, k-1):
+        ind = np.concatenate((ind, np.repeat(i, nk[i])), axis=0)
+    print(ind)
+    attr_train = np.zeros((ind.size, ind.max()+1))
+    attr_train[np.arange(ind.size), ind] = 1
+    print(attr_train)
+    attr_test = np.concatenate( (np.ones((int(nk[-1]), 1)), np.zeros((int(nk[-1]), k-2))), axis=1)
+    print(attr_test)
+
+    np.savez(outfile, x_train=x_train, x_test=x_test, y_train=y_train_expand, y_test=y_test_expand,
+             attr_train=attr_train, attr_test=attr_test, c_idx=c_idx)
 
 
 
@@ -156,18 +172,18 @@ if __name__ == '__main__':
 
     # Set parameters for run
     np.random.seed(0)
-    N = 3 # Total number of studies
-    K = 2 # number of training studies
-    nk = np.ones(N)*10 #5000 # number of observations per study, currently all same
+    K = 4 # Total number of studies
+    K_train = K-1 # number of training studies
+    nk = np.ones(K)*10 #5000 # number of observations per study, currently all same
     p = 30 # number of covariates
     p_c = 7 # number of common covariates
     eps = 0.1 # window size for common covariates
     eta = 2 # window size for non-comman covariates
-    beta_min = 1.5 # beta window minimum
+    beta_min = 0.5 # beta window minimum
     beta_max = 5 # beta window maximum
 
     # covariate means
-    mu = np.random.uniform(-3, 3, size=N*p).reshape((N, p))
+    mu = np.random.uniform(-3, 3, size=K*p).reshape((K, p))
 
     # SIG diagonal
     #sig = np.identity(p)
@@ -176,5 +192,5 @@ if __name__ == '__main__':
     arb = np.random.uniform(-1, 1, size=p*p).reshape((p, p))
     sig = arb.T @ arb
 
-    multi_study_sim(k=N, nk=nk, p=p, p_c=p_c, mu=mu, sig=sig, eps=eps, eta=eta, beta_min=beta_min, beta_max=beta_max,
+    multi_study_sim(k=K, nk=nk, p=p, p_c=p_c, mu=mu, sig=sig, eps=eps, eta=eta, beta_min=beta_min, beta_max=beta_max,
                     outfile=outfile)
