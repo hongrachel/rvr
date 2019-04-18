@@ -1,9 +1,11 @@
 #!/bin/bash
 
-base="/n/home06/fding/rvr/sweeps/" # "/Users/Frances/Documents/seas-fellowship/rvr/sweeps/"
+
+base="/Users/Frances/Documents/seas-fellowship/rvr/sweeps/"
+#base="/n/home06/fding/rvr/sweeps/"
 #file="/Users/Frances/Documents/seas-fellowship/rvr/sweeps/runp1_2_sweep/commands.sh"
 sweep="runp1_2_sweep"
-file=${base}${sweep}"/144commands.sh"
+file=${base}${sweep}"/commands.sh"
 out=${base}${sweep}"/array_commands/"
 
 count=0
