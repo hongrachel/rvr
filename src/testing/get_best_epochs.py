@@ -157,8 +157,9 @@ if __name__ == '__main__':
     runp_dirs = [(runp_dir.format(gamma, beta), gamma, beta) for gamma, beta in itertools.product(coeffs, coeffs)]
 
 
-    runagree_dir = 'runagree_p1_2_sweep_eo_041719/data--runagree--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}'
-    runagree_dirs = [(runagree_dir.format(gamma, beta), gamma, beta) for gamma, beta in itertools.product(coeffs, coeffs)]
+    sweepname = 'runagree_p1_2_sweep_eo_041719'
+    runagree_dir = '{}/data--runagree--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}'
+    runagree_dirs = [(runagree_dir.format(sweepname, gamma, beta), gamma, beta) for gamma, beta in itertools.product(coeffs, coeffs)]
 
 
     #expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runp_dirs]
@@ -182,13 +183,13 @@ if __name__ == '__main__':
 
     print(score_mat)
 
-    np.save('runp_1_2_sweep_eo_041719_score_mat.npy', score_mat)
+    np.save('{}_score_mat.npy'.format(sweepname), score_mat)
 
     save_csv = False
     if save_csv:
         import csv
 
-        with open('runhet_recon_results.csv', mode='w') as f:
+        with open('{}_results.csv'.format(sweepname), mode='w') as f:
             writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             for row in score_mat:
                 writer.writerow(row)
