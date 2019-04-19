@@ -150,17 +150,18 @@ if __name__ == '__main__':
 
     #coeffs = [0.0, 0.001, 0.005, 0.01, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 1.0, 4.0]
 
-    fair_coeffs = ['0_0', '0_001', '0_01', '0_05', '0_1', '0_15', '0_2', '0_3', '0_5', '1_0']
-    recon_coeffs = ['0_0', '0_001', '0_01', '0_015', '0_02', '0_03', '0_04', '0_05', '0_1', '0_15', '0_2', '0_3', '0_5', '1_0']
+    fair_coeffs = ['0_0', '0_01', '0_05', '0_1', '0_15', '0_2', '0_3', '0_5', '1_0', '4.0']
+    recon_coeffs = ['0_0', '0_001', '0_005', '0_01', '0_03', '0_05', '0_1', '0_15', '0_2', '0_3']
 
 #    runp_dir = 'runp1_2_sweep_dp/data--runp1_2--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}--model_recon_coeff-{}'
     #runp_dir = 'runp1_2_sweep_eo_041719/data--runp1_2--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}'
     #runp_dirs = [(runp_dir.format(gamma, beta), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
 
-    sweepname = 'runagree_p1_2_sweep_eo_041719'
-    runagree_dir = '{}/data--runagree--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}'
-    runagree_dirs = [(runagree_dir.format(sweepname, gamma, beta), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
+    sweepname = 'runagree_p1_2_eo_041719_seed'
+    seed = 7
+    runagree_dir = '{}/data--runagree--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
+    runagree_dirs = [(runagree_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
 
     #expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runp_dirs]
