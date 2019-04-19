@@ -180,7 +180,7 @@ if __name__ == '__main__':
         #print(err, classce, discce)
         score_mat.append(err)
 
-    score_mat = np.reshape(np.array(score_mat), (len(coeffs), -1))
+    score_mat = np.reshape(np.array(score_mat), (len(fair_coeffs), -1))
 
     print(score_mat)
 

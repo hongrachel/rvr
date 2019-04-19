@@ -12,10 +12,11 @@
     },
     "overrides": {
         "model": {
-            "fair_coeff":  [0.0, 0.001, 0.01, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 1.0],
-            "recon_coeff": [0.015, 0.02, 0.03, 0.04],
+            "fair_coeff":  [0.0, 0.01, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 1.0],
+            "recon_coeff": [0.0, 0.001, 0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.1, 0.15],
             "class": ["MultiEqOddsUnweightedWassGan"],
-            "adim": [4]
+            "adim": [4],
+            "seed": [7, 13]
         },
         "transfer": {
             "epoch_number": [900],
