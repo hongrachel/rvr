@@ -10,7 +10,7 @@ out=${base}${sweep}"/array_commands/"
 
 count=0
 subcount=0
-numcommands=2
+numcommands=5
 
 while IFS= read -r line
 do

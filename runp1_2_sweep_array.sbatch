@@ -2,7 +2,7 @@
 # runp1_2_sweep_array.sbatch
 #
 #SBATCH -J runp1_2
-#SBATCH -t 0-2:30
+#SBATCH -t 0-10:00
 #SBATCH -p fas_gpu
 #SBATCH --gres=gpu
 #SBATCH --mem=1000
