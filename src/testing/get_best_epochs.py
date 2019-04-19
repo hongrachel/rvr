@@ -159,7 +159,7 @@ if __name__ == '__main__':
 
 
     sweepname = 'runagree_p1_2_eo_041719_seed'
-    seed = 7
+    seed = 11
     runagree_dir = '{}/data--runagree--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
     runagree_dirs = [(runagree_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
@@ -185,7 +185,7 @@ if __name__ == '__main__':
 
     print(score_mat)
 
-    np.save('{}_score_mat.npy'.format(sweepname), score_mat)
+    np.save('{}_{}_score_mat.npy'.format(sweepname, seed), score_mat)
 
     save_csv = False
     if save_csv:
