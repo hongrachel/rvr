@@ -150,7 +150,7 @@ if __name__ == '__main__':
 
     #coeffs = [0.0, 0.001, 0.005, 0.01, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 1.0, 4.0]
 
-    fair_coeffs = ['0_0', '0_01', '0_05', '0_1', '0_15', '0_2', '0_3', '0_5', '1_0', '4.0']
+    fair_coeffs = ['0_0', '0_01', '0_05', '0_1', '0_15', '0_2', '0_3', '0_5', '1_0', '4_0']
     recon_coeffs = ['0_0', '0_001', '0_005', '0_01', '0_03', '0_05', '0_1', '0_15', '0_2', '0_3']
 
 #    runp_dir = 'runp1_2_sweep_dp/data--runp1_2--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}--model_recon_coeff-{}'
