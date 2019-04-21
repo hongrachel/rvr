@@ -25,6 +25,7 @@ class Tester(object):
         Zs = np.empty((0, self.model.zdim))
         Ys = np.empty((0, 1))
         As = np.empty((0, self.model.adim))
+        X_hats = np.empty((0, self.model.xdim))
 
         for x, y, a in test_iter:
             num_batches += 1
@@ -35,13 +36,14 @@ class Tester(object):
             feed_dict = {self.model.X: x, self.model.Y: y, self.model.A: a, self.model.epoch: np.array([BIG_EPOCH])}
 
             # run forward encoder-classifier-decoder
-            class_loss, recon_loss, class_err, Y_hat, Z, Y = self.sess.run(
+            class_loss, recon_loss, class_err, Y_hat, Z, Y, X_hat = self.sess.run(
                 [self.model.class_loss,
                  self.model.recon_loss,
                  self.model.class_err,
                  self.model.Y_hat,
                  self.model.Z,
-                 self.model.Y],
+                 self.model.Y,
+                 self.model.X_hat],
                 feed_dict=feed_dict
             )
             # run forward auditor
@@ -64,12 +66,14 @@ class Tester(object):
             Ys = np.concatenate((Ys, Y))
             A_hats = np.concatenate((A_hats, A_hat))
             As = np.concatenate((As, A))
+            X_hats = np.concatenate((X_hats, X_hat))
 
         Y_hat = Y_hats
         Y = Ys
         A_hat = A_hats
         A = As
         Z = Zs
+        X_hat = X_hats
 
         tensorD = {}
         tensorD['Y_hat'] = Y_hat
@@ -77,6 +81,7 @@ class Tester(object):
         tensorD['Y'] = Y
         tensorD['A_hat'] = A_hat
         tensorD['A'] = A
+        tensorD['X_hat'] = X_hat
 
         for d in tensorD:
             print(tensorD[d].shape)

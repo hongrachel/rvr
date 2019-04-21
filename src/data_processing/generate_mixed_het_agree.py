@@ -172,7 +172,7 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, outfil
 
 if __name__ == '__main__':
     # Save file name:
-    outfile = 'run_agree_p1_2_041719'
+    outfile = 'run_agree_p1_2_042019'
 
     # Set parameters for run
     np.random.seed(0)
@@ -183,8 +183,8 @@ if __name__ == '__main__':
     p_c = 7 # number of common covariates
     eps = 0.1 # window size for common covariates
     eta = 2 # window size for non-comman covariates
-    beta_min = 0.5 # beta window minimum
-    beta_max = 5 # beta window maximum
+    beta_min = 0.25 # beta window minimum
+    beta_max = 2 # beta window maximum
 
     # covariate means
     mu = np.random.uniform(-3, 3, size=K*p).reshape((K, p))

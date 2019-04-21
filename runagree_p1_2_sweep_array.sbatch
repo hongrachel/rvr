@@ -2,7 +2,7 @@
 # runagree_p1_2_sweep_array.sbatch
 #
 #SBATCH -J runagree_p1_2
-#SBATCH -t 0-10:00
+#SBATCH -t 0-20:00
 #SBATCH -p fas_gpu
 #SBATCH --gres=gpu
 #SBATCH --mem=1500
