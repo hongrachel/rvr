@@ -153,7 +153,7 @@ if __name__ == '__main__':
     #fair_coeffs = ['0_0', '0_01', '0_05', '0_1', '0_15', '0_2', '0_3', '0_5', '1_0', '4_0']
     #recon_coeffs = ['0_0', '0_001', '0_005', '0_01', '0_03', '0_05', '0_1', '0_15', '0_2', '0_3']
 
-    fair_coeffs = ['0_0', '0_01', '0_5', '1_0', '3_0', '5_0', '10_0', '15_0']
+    fair_coeffs = ['0_0', '0_1', '0_5', '1_0', '3_0', '5_0', '10_0', '15_0']
     recon_coeffs = ['0_0', '0_0005', '0_001', '0_002', '0_003', '0_005', '0_007', '0_01', '0_03', '0_05', '0_1']
 
 #    runp_dir = 'runp1_2_sweep_dp/data--runp1_2--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}--model_recon_coeff-{}'
@@ -161,8 +161,8 @@ if __name__ == '__main__':
     #runp_dirs = [(runp_dir.format(gamma, beta), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
 
-    sweepname = 'runagree_p1_2_seed_042019'
-    seed = 0
+    sweepname = 'runagree_seed_p1_2_042019'
+    seed = 4
     runagree_dir = '{}/data--runagree--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
     runagree_dirs = [(runagree_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
