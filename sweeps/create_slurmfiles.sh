@@ -4,7 +4,7 @@
 base="/Users/Frances/Documents/seas-fellowship/rvr/sweeps/"
 #base="/n/home06/fding/rvr/sweeps/"
 #file="/Users/Frances/Documents/seas-fellowship/rvr/sweeps/runp1_2_sweep/commands.sh"
-sweep="runagree_sweep"
+sweep="runp1_2_sweep"
 file=${base}${sweep}"/commands.sh"
 out=${base}${sweep}"/array_commands/"
 
