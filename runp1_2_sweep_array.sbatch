@@ -5,7 +5,7 @@
 #SBATCH -t 0-12:00
 #SBATCH -p fas_gpu
 #SBATCH --gres=gpu
-#SBATCH --mem=1000
+#SBATCH --mem=1500
 #SBATCH -o outfiles/slurm-%A-%a.out # STDOUT
 #SBATCH -e outfiles/slurm-%A-%a.err # STDERR
 
