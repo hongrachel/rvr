@@ -8,7 +8,7 @@
     "partition": "gpuc",
     "templates": {
         "data": ["runagree"],
-        "dirs": "local"
+        "dirs": "odyssey"
     },
     "overrides": {
         "model": {

@@ -1,0 +1,4 @@
+"data_dir": "./data",
+"log_dir": "/n/scratchlfs/macklis_lab/fding/rvr/tfboard_logs",
+"exp_dir": "/n/scratchlfs/macklis_lab/fding/rvr/experiments",
+"repr_dir":"/n/scratchlfs/macklis_lab/fding/rvr/experiments"
