@@ -120,7 +120,7 @@ if __name__ == '__main__':
         
     '''
     parser = argparse.ArgumentParser()
-    parser.add_argument('seed', type=int, help='random seed value')
+    parser.add_argument('--seed', type=int, help='random seed value')
     args=parser.parse_args()
 
     on_laptop = False
