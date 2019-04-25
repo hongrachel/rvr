@@ -1,6 +1,6 @@
 # generate_mixed_het_agree.py
 #
-# Generates data with mixed heterogeneity with agreement between the common and uncommon factors about the label
+# Generates data with mixed heterogeneity with agreement between the common and study-specific factors about the label
 #
 ''' Parameters to set:
 
@@ -32,31 +32,91 @@ def perturb_betas(beta_vec, k, c_idx, eps, eta):
     return out
 
 def compute_label(x_vec, beta_vec, exact=False):
+    intermediate = x_vec @ beta_vec
     if exact:
-        if x_vec @ beta_vec > 0:
-            return 1
-        else:
-            return 0
+        return 1 if intermediate > 0 else 0
     else:
-        z = 1.0 / (1 + np.exp(-(x_vec @ beta_vec)))
+        z = 1.0 / (1 + np.exp(-(intermediate)))
         out = np.random.binomial(1, z, len(z))
     return out
 
-def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, outfile):
+def compute_label_interact(x_vec, beta_vec, int_thresh, interaction_prod, interaction_thresh,
+                           x_vec_int_prod=None, beta_vec_int_prod=None,
+                           x_vec_int_thresh=None, beta_vec_int_thresh=None, exact=False):
+
+    dotprod = x_vec @ beta_vec
+    if interaction_prod:
+        x1s = x_vec_int_prod[:len(beta_vec_int_prod)]
+        x2s = x_vec_int_prod[len(beta_vec_int_prod):]
+        intprod = np.multiply( np.multiply(x1s, x2s), beta_vec_int_prod)
+    else:
+        intprod = 0
+
+    if interaction_thresh:
+        x1s = x_vec_int_thresh[:len(beta_vec_int_thresh)]
+        x2s = x_vec_int_thresh[len(beta_vec_int_thresh):]
+        thresholded = [1 if (x1s[i] > int_thresh and x2s[i] > int_thresh) else 0 for i in range(len(x1s))]
+        intthresh_result = thresholded @ beta_vec_int_thresh
+    else:
+        intthresh_result = 0
+
+
+    print(dotprod, intprod, intthresh_result)
+
+    intermediate = dotprod + intprod + intthresh_result
+
+    if exact:
+        return 1 if intermediate > 0 else 0
+
+    else: # for common features, use sigmoid
+        z = 1.0 / (1 + np.exp(-intermediate))
+        out = np.random.binomial(1, z, len(z))
+    return out
+
+
+def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_int_prod, num_int_thresh, int_thresh,
+                    beta_int_min, beta_int_max, outfile):
+
+    interaction_prod = True if num_int_prod > 0 else False
+    interaction_thresh = True if num_int_thresh > 0 else False
 
     # generate common features
     c_idx = np.random.choice(range(p), size=p_c, replace=False) # indices of common features
     non_c_idx = list(set(range(p)).difference(c_idx))
-    #mask = [0 if x in c_idx else 1 for x in range(p)]
-    #notmask = [1-x for x in mask]
+
+    # pick indices for interaction terms
+    if interaction_prod:
+        c_idx_int_prod = np.random.choice(c_idx, size=2*num_int_prod, replace=False)
+        non_c_idx_int_prod = np.random.choice(non_c_idx, size=2*num_int_prod, replace=False)
+    if interaction_thresh:
+        non_c_idx_int_thresh = np.random.choice(non_c_idx, size=2*num_int_thresh, replace=False)
+        c_idx_int_thresh = np.random.choice(c_idx, size=2*num_int_thresh, replace=False)
+
+    print(c_idx, c_idx_int_prod, c_idx_int_thresh)
+    print(non_c_idx, non_c_idx_int_prod, non_c_idx_int_thresh)
+
 
 
     # generate 'true' betas
     beta_vec = np.random.uniform(beta_min, beta_max, size=p)
     beta_vec = np.array([x if np.random.rand() < 0.5 else -x for x in beta_vec ]) #make about half negative
+    if interaction_prod:
+        beta_vec_int_prod = np.random.uniform(beta_int_min, beta_int_max, size=2*num_int_prod)
+    if interaction_thresh:
+        beta_vec_int_thresh = np.random.uniform(beta_int_min, beta_int_max, size=2*num_int_thresh)
+
+    print(beta_vec_int_prod, beta_vec_int_thresh)
 
     # generate study-specific betas
     beta_vec_list = perturb_betas(beta_vec, k, c_idx, eps, eta)
+
+    if interaction_prod: # the first half of these lists are for common features, second half for study-specific
+        beta_vec_list_int_prod = perturb_betas(beta_vec_int_prod, k, range(num_int_prod), eps, beta_int_max)
+    if interaction_thresh:
+        beta_vec_list_int_thresh = perturb_betas(beta_vec_int_thresh, k, range(num_int_thresh), eps, beta_int_max)
+
+    print(beta_vec_list_int_prod)
+    print(beta_vec_list_int_thresh)
 
     # generate each study's covariates with a form of rejection sampling
     baserates = np.random.uniform(0.3, 0.7, size=k)
@@ -78,13 +138,21 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, outfil
             x_vec = np.random.multivariate_normal(mean=mu[i], cov=sig, size=1)
 
             # find label from common features
-            y = compute_label(x_vec=x_vec[:,c_idx], beta_vec=beta_vec_list[i, c_idx])
+            if interaction_prod and interaction_thresh:
+                TODO
+            elif interaction_prod and not interaction_thresh:
+                TODO
+            elif not interaction_prod and interaction_thresh:
+                TODO
+            else:
+                y = compute_label(x_vec=x_vec[:,c_idx], beta_vec=beta_vec_list[i, c_idx])
 
-            # check if uncommon features agree
-            y_uncommon = compute_label(x_vec=x_vec[:,non_c_idx], beta_vec=beta_vec_list[i, non_c_idx], exact=True)
+                # check if study-specific features agree
+                y_studyspecific = compute_label(x_vec=x_vec[:,non_c_idx], beta_vec=beta_vec_list[i, non_c_idx], exact=True)
+
             totalcount += 1
 
-            if (y == 1 and y_uncommon == 1): # if both agree on positive, add to vector
+            if (y == 1 and y_studyspecific == 1): # if both agree on positive, add to vector
                 x_vec_pos[poscount, :] = x_vec
                 poscount += 1
 
@@ -98,11 +166,11 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, outfil
             # find label from common features
             y = compute_label(x_vec=x_vec[:, c_idx], beta_vec=beta_vec_list[i, c_idx])
 
-            # check if uncommon features agree
-            y_uncommon = compute_label(x_vec=x_vec[:, non_c_idx], beta_vec=beta_vec_list[i, non_c_idx], exact=True)
+            # check if study-specific features agree
+            y_studyspecific = compute_label(x_vec=x_vec[:, non_c_idx], beta_vec=beta_vec_list[i, non_c_idx], exact=True)
             totalcount += 1
 
-            if (y == 0 and y_uncommon == 0): # if both agree on positive, add to vector
+            if (y == 0 and y_studyspecific == 0): # if both agree on positive, add to vector
                 x_vec_neg[negcount, :] = x_vec
                 negcount += 1
 
@@ -118,28 +186,6 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, outfil
         else: # last study is test study
             x_test = x_vec_out
             y_test = y_vec
-        """x_vec = np.random.multivariate_normal(mean=mu[i], cov=sig, size=int(4*nk[i])) # 4x as many datapoints as needed
-        y_vec = compute_label(x_vec[:, c_idx], beta_vec_list[i, c_idx]) # labels based on common features
-        print(beta_vec_list[i])
-        print(y_vec)
-        pos_idx = np.where(y_vec == 1)[0] # indices where y is positive
-        neg_idx = np.where(y_vec == 0)[0]
-        assert(len(pos_idx) > numpos)
-        assert(len(neg_idx) > numneg)
-
-        final_pos_idx = pos_idx[:numpos]
-        final_neg_idx = neg_idx[:numneg]
-
-        x_vec_pos = x_vec[final_pos_idx, :]
-        x_vec_neg = x_vec[final_neg_idx, :]
-
-        #print(x_vec_pos[:, c_idx] @ beta_vec_list[i, c_idx])
-        #print(x_vec_neg[:, c_idx] @ beta_vec_list[i, c_idx])
-
-
-
-        x_vec_out = np.concatenate((x_vec_pos, x_vec_neg), axis = 0)
-        print(x_vec_out)"""
 
 
     # make y vectors 2-D
@@ -163,28 +209,33 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, outfil
     valid_inds = shuffled[numtrainidx:]
 
     # save outfile
-    np.savez(outfile, x_train=x_train, x_test=x_test, y_train=y_train_expand, y_test=y_test_expand,
-             attr_train=attr_train, attr_test=attr_test, train_inds=train_inds, valid_inds=valid_inds,
-             c_idx=c_idx, beta_vec_list=beta_vec_list)
+    #np.savez(outfile, x_train=x_train, x_test=x_test, y_train=y_train_expand, y_test=y_test_expand,
+    #         attr_train=attr_train, attr_test=attr_test, train_inds=train_inds, valid_inds=valid_inds,
+    #         c_idx=c_idx, beta_vec_list=beta_vec_list)
 
 
 
 
 if __name__ == '__main__':
     # Save file name:
-    outfile = 'run_agree_p1_2_042019'
+    outfile = 'TESTTESTrun_agree_p1_2_042019'
 
     # Set parameters for run
     np.random.seed(0)
     K = 5 # Total number of studies
     K_train = K-1 # number of training studies
-    nk = np.ones(K)*5000 #5000 # number of observations per study, currently all same
+    nk = np.ones(K)*10 #5000 # number of observations per study, currently all same
     p = 30 # number of covariates
     p_c = 7 # number of common covariates
     eps = 0.1 # window size for common covariates
     eta = 2 # window size for non-comman covariates
     beta_min = 0.25 # beta window minimum
     beta_max = 2 # beta window maximum
+    num_int_prod = 2 # number of interaction terms based on the product of two covariates
+    num_int_thresh = 1 # number of interaction terms based on whether two covariates are above a threshold
+    int_thresh = 2 # threshold of interest for the interaction terms
+    beta_int_min = 0.25 # interaction term beta window minimum
+    beta_int_max = 1 # interaction term beta window maximum
 
     # covariate means
     mu = np.random.uniform(-3, 3, size=K*p).reshape((K, p))
@@ -197,4 +248,5 @@ if __name__ == '__main__':
     sig = arb.T @ arb
 
     multi_study_sim(k=K, nk=nk, p=p, p_c=p_c, mu=mu, sig=sig, eps=eps, eta=eta, beta_min=beta_min, beta_max=beta_max,
-                    outfile=outfile)
+                    num_int_prod=num_int_prod, num_int_thresh=num_int_thresh, int_thresh=int_thresh,
+                    beta_int_min=beta_int_min, beta_int_max=beta_int_max, outfile=outfile)
