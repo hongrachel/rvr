@@ -2,6 +2,7 @@ import numpy as np
 import itertools
 import os
 import sys
+import argparse
 sys.path.append("/Users/Frances/Documents/seas-fellowship/rvr/src/")
 sys.path.append("~/rvr/src/")
 sys.path.append("/n/home06/fding/rvr/src/testing/")
@@ -87,36 +88,40 @@ if __name__ == '__main__':
 
     # Original from DM, EC:
     '''
-    # expdirs = ['/ais/gobi5/madras/adv-fair-reps/experiments/health_eqopp_whw_fc6_ua_2']
-    expdir = '/ais/gobi5/madras/adv-fair-reps/experiments/'
-    dp_dirs = ['adult_dempar_whw_fc{}'.format(num2str(gamma)) \
-               for gamma in [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4]] + \
-             ['health_dempar_whw_fc{}_ua'.format(num2str(gamma)) \
-              for gamma in [1, 1.5, 2, 2.5, 3, 3.5, 4]]
-    eqodds_dirs = ['adult_eqodds_whw_fc{}_2'.format(num2str(gamma)) \
-               for gamma in [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4]] + \
-                    ['health_eqodds_whw_fc{}_ua_2'.format(num2str(gamma)) \
-                     for gamma in [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4]]
-    eqopp_dirs = ['adult_eqopp_whw_fc{}_2'.format(num2str(gamma)) \
-               for gamma in [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5]] + \
-                    ['health_eqopp_whw_fc{}_ua_2'.format(num2str(gamma)) \
-                     for gamma in [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5]]
-    expdirs = [os.path.join(expdir, d) for d in dp_dirs + eqodds_dirs + eqopp_dirs]
-    fmets = ['DP', 'DI', 'DI_FP', 'ErrA']
-    lamda = 1.
-    
-    # somehow loop over all runs
-    for d in expdirs:
-        # for each fairness metric
-        best_eps = {}
-        for fm in fmets:
-            best_ep, best_fair = get_best_epoch(d, fm, lamda)
-            best_eps[fm] = (best_ep, best_fair)
-        fname = os.path.join(d, 'best_validation_fairness.txt')
-        write_best_epochs(fname, best_eps, lamda)
-        print('Wrote metrics to {}'.format(fname))
-    
+    if revert_to_original:
+        # expdirs = ['/ais/gobi5/madras/adv-fair-reps/experiments/health_eqopp_whw_fc6_ua_2']
+        expdir = '/ais/gobi5/madras/adv-fair-reps/experiments/'
+        dp_dirs = ['adult_dempar_whw_fc{}'.format(num2str(gamma)) \
+                   for gamma in [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4]] + \
+                 ['health_dempar_whw_fc{}_ua'.format(num2str(gamma)) \
+                  for gamma in [1, 1.5, 2, 2.5, 3, 3.5, 4]]
+        eqodds_dirs = ['adult_eqodds_whw_fc{}_2'.format(num2str(gamma)) \
+                   for gamma in [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4]] + \
+                        ['health_eqodds_whw_fc{}_ua_2'.format(num2str(gamma)) \
+                         for gamma in [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4]]
+        eqopp_dirs = ['adult_eqopp_whw_fc{}_2'.format(num2str(gamma)) \
+                   for gamma in [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5]] + \
+                        ['health_eqopp_whw_fc{}_ua_2'.format(num2str(gamma)) \
+                         for gamma in [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5]]
+        expdirs = [os.path.join(expdir, d) for d in dp_dirs + eqodds_dirs + eqopp_dirs]
+        fmets = ['DP', 'DI', 'DI_FP', 'ErrA']
+        lamda = 1.
+        
+        # somehow loop over all runs
+        for d in expdirs:
+            # for each fairness metric
+            best_eps = {}
+            for fm in fmets:
+                best_ep, best_fair = get_best_epoch(d, fm, lamda)
+                best_eps[fm] = (best_ep, best_fair)
+            fname = os.path.join(d, 'best_validation_fairness.txt')
+            write_best_epochs(fname, best_eps, lamda)
+            print('Wrote metrics to {}'.format(fname))
+        
     '''
+    parser = argparse.ArgumentParser()
+    parser.add_argument('seed', type=int, help='random seed value')
+    args=parser.parse_args()
 
     on_laptop = False
     if on_laptop:
@@ -160,7 +165,7 @@ if __name__ == '__main__':
     recon_coeffs = ['0_0', '0_001', '0_005', '0_01', '0_025', '0_05', '0_075', '0_1', '0_3', '0_5']
 
     sweepname = 'runp1_2_sweep_eo_042219'
-    seed = 0
+    seed = args.seed
     #runp_dir = '{}/data--runp1_2--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}--model_recon_coeff-{}'
     runp_dir = '{}/data--runp1_2--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
     runp_dirs = [(runp_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
