@@ -32,36 +32,35 @@ def perturb_betas(beta_vec, k, c_idx, eps, eta):
     return out
 
 def compute_label(x_vec, beta_vec, exact=False):
-    intermediate = x_vec @ beta_vec
+    intermediate = x_vec.squeeze() @ beta_vec
     if exact:
         return 1 if intermediate > 0 else 0
     else:
         z = 1.0 / (1 + np.exp(-(intermediate)))
-        out = np.random.binomial(1, z, len(z))
+        out = np.random.binomial(1, z, 1)
     return out
 
 def compute_label_interact(x_vec, beta_vec, int_thresh, interaction_prod, interaction_thresh,
                            x_vec_int_prod=None, beta_vec_int_prod=None,
                            x_vec_int_thresh=None, beta_vec_int_thresh=None, exact=False):
 
-    dotprod = x_vec @ beta_vec
+    dotprod = x_vec.squeeze() @ beta_vec
+
     if interaction_prod:
-        x1s = x_vec_int_prod[:len(beta_vec_int_prod)]
-        x2s = x_vec_int_prod[len(beta_vec_int_prod):]
-        intprod = np.multiply( np.multiply(x1s, x2s), beta_vec_int_prod)
+        x1s = x_vec_int_prod[:,:len(beta_vec_int_prod)].squeeze()
+        x2s = x_vec_int_prod[:,len(beta_vec_int_prod):].squeeze()
+        intprod = np.sum(np.multiply( np.multiply(x1s, x2s), beta_vec_int_prod))
     else:
         intprod = 0
 
     if interaction_thresh:
-        x1s = x_vec_int_thresh[:len(beta_vec_int_thresh)]
-        x2s = x_vec_int_thresh[len(beta_vec_int_thresh):]
+        x1s = x_vec_int_thresh[:,:len(beta_vec_int_thresh)].squeeze(axis=1)
+        x2s = x_vec_int_thresh[:,len(beta_vec_int_thresh):].squeeze(axis=1)
+
         thresholded = [1 if (x1s[i] > int_thresh and x2s[i] > int_thresh) else 0 for i in range(len(x1s))]
         intthresh_result = thresholded @ beta_vec_int_thresh
     else:
         intthresh_result = 0
-
-
-    print(dotprod, intprod, intthresh_result)
 
     intermediate = dotprod + intprod + intthresh_result
 
@@ -70,8 +69,8 @@ def compute_label_interact(x_vec, beta_vec, int_thresh, interaction_prod, intera
 
     else: # for common features, use sigmoid
         z = 1.0 / (1 + np.exp(-intermediate))
-        out = np.random.binomial(1, z, len(z))
-    return out
+        out = np.random.binomial(1, z, 1)
+        return out
 
 
 def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_int_prod, num_int_thresh, int_thresh,
@@ -92,11 +91,6 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_in
         non_c_idx_int_thresh = np.random.choice(non_c_idx, size=2*num_int_thresh, replace=False)
         c_idx_int_thresh = np.random.choice(c_idx, size=2*num_int_thresh, replace=False)
 
-    print(c_idx, c_idx_int_prod, c_idx_int_thresh)
-    print(non_c_idx, non_c_idx_int_prod, non_c_idx_int_thresh)
-
-
-
     # generate 'true' betas
     beta_vec = np.random.uniform(beta_min, beta_max, size=p)
     beta_vec = np.array([x if np.random.rand() < 0.5 else -x for x in beta_vec ]) #make about half negative
@@ -105,8 +99,6 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_in
     if interaction_thresh:
         beta_vec_int_thresh = np.random.uniform(beta_int_min, beta_int_max, size=2*num_int_thresh)
 
-    print(beta_vec_int_prod, beta_vec_int_thresh)
-
     # generate study-specific betas
     beta_vec_list = perturb_betas(beta_vec, k, c_idx, eps, eta)
 
@@ -114,9 +106,6 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_in
         beta_vec_list_int_prod = perturb_betas(beta_vec_int_prod, k, range(num_int_prod), eps, beta_int_max)
     if interaction_thresh:
         beta_vec_list_int_thresh = perturb_betas(beta_vec_int_thresh, k, range(num_int_thresh), eps, beta_int_max)
-
-    print(beta_vec_list_int_prod)
-    print(beta_vec_list_int_thresh)
 
     # generate each study's covariates with a form of rejection sampling
     baserates = np.random.uniform(0.3, 0.7, size=k)
@@ -139,14 +128,37 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_in
 
             # find label from common features
             if interaction_prod and interaction_thresh:
-                TODO
+                y = compute_label_interact(x_vec=x_vec[:,c_idx], beta_vec=beta_vec_list[i, c_idx], int_thresh=int_thresh,
+                                           interaction_prod=interaction_prod, interaction_thresh=interaction_thresh,
+                                           x_vec_int_prod=x_vec[:,c_idx_int_prod], beta_vec_int_prod=beta_vec_list_int_prod[i,:num_int_prod],
+                                           x_vec_int_thresh=x_vec[:,c_idx_int_thresh], beta_vec_int_thresh=beta_vec_list_int_thresh[i,:num_int_thresh])
+
+                y_studyspecific = compute_label_interact(x_vec=x_vec[:,non_c_idx], beta_vec=beta_vec_list[i, non_c_idx],
+                                                         int_thresh=int_thresh,
+                                                         interaction_prod=interaction_prod, interaction_thresh=interaction_thresh,
+                                                         x_vec_int_prod=x_vec[:,non_c_idx_int_prod], beta_vec_int_prod=beta_vec_list_int_prod[i,num_int_prod:],
+                                                         x_vec_int_thresh=x_vec[:,non_c_idx_int_thresh], beta_vec_int_thresh=beta_vec_list_int_thresh[i,num_int_thresh:],
+                                                         exact=True)
             elif interaction_prod and not interaction_thresh:
-                TODO
+                y = compute_label_interact(x_vec=x_vec[:,c_idx], beta_vec=beta_vec_list[i, c_idx], int_thresh=int_thresh,
+                                           interaction_prod=interaction_prod, interaction_thresh=interaction_thresh,
+                                           x_vec_int_prod=x_vec[:,c_idx_int_prod], beta_vec_int_prod=beta_vec_list_int_prod[i,:num_int_prod])
+                y_studyspecific = compute_label_interact(x_vec=x_vec[:,non_c_idx], beta_vec=beta_vec_list[i, non_c_idx],
+                                                         int_thresh=int_thresh,
+                                                         interaction_prod=interaction_prod, interaction_thresh=interaction_thresh,
+                                                         x_vec_int_prod=x_vec[:,non_c_idx_int_prod], beta_vec_int_prod=beta_vec_list_int_prod[i,num_int_prod:],
+                                                         exact=True)
             elif not interaction_prod and interaction_thresh:
-                TODO
+                y = compute_label_interact(x_vec=x_vec[:,c_idx], beta_vec=beta_vec_list[i, c_idx], int_thresh=int_thresh,
+                                           interaction_prod=interaction_prod, interaction_thresh=interaction_thresh,
+                                           x_vec_int_thresh=x_vec[:,c_idx_int_thresh], beta_vec_int_thresh=beta_vec_list_int_thresh[i,:num_int_thresh])
+                y_studyspecific = compute_label_interact(x_vec=x_vec[:,non_c_idx], beta_vec=beta_vec_list[i, non_c_idx],
+                                                         int_thresh=int_thresh,
+                                                         interaction_prod=interaction_prod, interaction_thresh=interaction_thresh,
+                                                         x_vec_int_thresh=x_vec[:,non_c_idx_int_thresh], beta_vec_int_thresh=beta_vec_list_int_thresh[i,num_int_thresh:],
+                                                         exact=True)
             else:
                 y = compute_label(x_vec=x_vec[:,c_idx], beta_vec=beta_vec_list[i, c_idx])
-
                 # check if study-specific features agree
                 y_studyspecific = compute_label(x_vec=x_vec[:,non_c_idx], beta_vec=beta_vec_list[i, non_c_idx], exact=True)
 
@@ -209,9 +221,9 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_in
     valid_inds = shuffled[numtrainidx:]
 
     # save outfile
-    #np.savez(outfile, x_train=x_train, x_test=x_test, y_train=y_train_expand, y_test=y_test_expand,
-    #         attr_train=attr_train, attr_test=attr_test, train_inds=train_inds, valid_inds=valid_inds,
-    #         c_idx=c_idx, beta_vec_list=beta_vec_list)
+    np.savez(outfile, x_train=x_train, x_test=x_test, y_train=y_train_expand, y_test=y_test_expand,
+             attr_train=attr_train, attr_test=attr_test, train_inds=train_inds, valid_inds=valid_inds,
+             c_idx=c_idx, beta_vec_list=beta_vec_list)
 
 
 
@@ -233,7 +245,7 @@ if __name__ == '__main__':
     beta_max = 2 # beta window maximum
     num_int_prod = 2 # number of interaction terms based on the product of two covariates
     num_int_thresh = 1 # number of interaction terms based on whether two covariates are above a threshold
-    int_thresh = 2 # threshold of interest for the interaction terms
+    int_thresh = 0 # threshold of interest for the interaction terms
     beta_int_min = 0.25 # interaction term beta window minimum
     beta_int_max = 1 # interaction term beta window maximum
 
