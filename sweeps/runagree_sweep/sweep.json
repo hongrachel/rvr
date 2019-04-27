@@ -1,5 +1,5 @@
 {
-    "sweep_name": "runagree_seed_p1_2_042019",
+    "sweep_name": "runagree_interact_042619",
     "script": ["src/run_laftr.py", "src/run_unf_clf.py"],
     "config": "sweeps/runagree_sweep/config.json",
     "n_proc": 15,
@@ -13,7 +13,7 @@
     "overrides": {
         "model": {
             "fair_coeff":  [0.0, 0.1, 0.5, 1.0, 3.0, 5.0, 10.0, 15.0],
-            "recon_coeff": [0.0, 0.0005, 0.001, 0.002, 0.003, 0.005, 0.007, 0.01, 0.03, 0.05, 0.1],
+            "recon_coeff": [0.0, 0.0005, 0.001, 0.002, 0.003, 0.005, 0.007, 0.01, 0.03, 0.05, 0.7, 0.1],
             "class": ["MultiEqOddsUnweightedWassGan"],
             "adim": [4],
             "seed": [0,1,2,3,4]

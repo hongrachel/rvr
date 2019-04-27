@@ -54,8 +54,8 @@ def compute_label_interact(x_vec, beta_vec, int_thresh, interaction_prod, intera
         intprod = 0
 
     if interaction_thresh:
-        x1s = x_vec_int_thresh[:,:len(beta_vec_int_thresh)].squeeze(axis=1)
-        x2s = x_vec_int_thresh[:,len(beta_vec_int_thresh):].squeeze(axis=1)
+        x1s = x_vec_int_thresh[:,:len(beta_vec_int_thresh)].squeeze(axis=0)
+        x2s = x_vec_int_thresh[:,len(beta_vec_int_thresh):].squeeze(axis=0)
 
         thresholded = [1 if (x1s[i] > int_thresh and x2s[i] > int_thresh) else 0 for i in range(len(x1s))]
         intthresh_result = thresholded @ beta_vec_int_thresh
@@ -96,8 +96,10 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_in
     beta_vec = np.array([x if np.random.rand() < 0.5 else -x for x in beta_vec ]) #make about half negative
     if interaction_prod:
         beta_vec_int_prod = np.random.uniform(beta_int_min, beta_int_max, size=2*num_int_prod)
+        beta_vec_int_prod = np.array([x if np.random.rand() < 0.5 else -x for x in beta_vec_int_prod ]) #make about half negative
     if interaction_thresh:
         beta_vec_int_thresh = np.random.uniform(beta_int_min, beta_int_max, size=2*num_int_thresh)
+        beta_vec_int_thresh = np.array([x if np.random.rand() < 0.5 else -x for x in beta_vec_int_thresh ]) #make about half negative
 
     # generate study-specific betas
     beta_vec_list = perturb_betas(beta_vec, k, c_idx, eps, eta)
@@ -223,28 +225,31 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_in
     # save outfile
     np.savez(outfile, x_train=x_train, x_test=x_test, y_train=y_train_expand, y_test=y_test_expand,
              attr_train=attr_train, attr_test=attr_test, train_inds=train_inds, valid_inds=valid_inds,
-             c_idx=c_idx, beta_vec_list=beta_vec_list)
+             c_idx=c_idx, beta_vec_list=beta_vec_list, c_idx_int_prod=c_idx_int_prod, c_idx_int_thresh=c_idx_int_thresh,
+             k=k, eps=eps, eta=eta, beta_min=beta_min, beta_max=beta_max, num_int_prod=num_int_prod,
+             num_int_thresh=num_int_thresh, int_thresh=int_thresh, beta_int_min=beta_int_min, beta_int_max=beta_int_max,
+             beta_vec_list_int_prod=beta_vec_list_int_prod, beta_vec_list_int_thresh=beta_vec_list_int_thresh)
 
 
 
 
 if __name__ == '__main__':
     # Save file name:
-    outfile = 'TESTTESTrun_agree_p1_2_042019'
+    outfile = 'run_agree_interact_042619'
 
     # Set parameters for run
     np.random.seed(0)
     K = 5 # Total number of studies
     K_train = K-1 # number of training studies
-    nk = np.ones(K)*10 #5000 # number of observations per study, currently all same
+    nk = np.ones(K)*5000 #5000 # number of observations per study, currently all same
     p = 30 # number of covariates
-    p_c = 7 # number of common covariates
+    p_c = 8 # number of common covariates
     eps = 0.1 # window size for common covariates
     eta = 2 # window size for non-comman covariates
     beta_min = 0.25 # beta window minimum
     beta_max = 2 # beta window maximum
-    num_int_prod = 2 # number of interaction terms based on the product of two covariates
-    num_int_thresh = 1 # number of interaction terms based on whether two covariates are above a threshold
+    num_int_prod = 3 # number of interaction terms based on the product of two covariates
+    num_int_thresh = 2 # number of interaction terms based on whether two covariates are above a threshold
     int_thresh = 0 # threshold of interest for the interaction terms
     beta_int_min = 0.25 # interaction term beta window minimum
     beta_int_max = 1 # interaction term beta window maximum
