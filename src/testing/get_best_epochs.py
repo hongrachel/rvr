@@ -158,27 +158,27 @@ if __name__ == '__main__':
     #fair_coeffs = ['0_0', '0_01', '0_05', '0_1', '0_15', '0_2', '0_3', '0_5', '1_0', '4_0']
     #recon_coeffs = ['0_0', '0_001', '0_005', '0_01', '0_03', '0_05', '0_1', '0_15', '0_2', '0_3']
 
-    #fair_coeffs = ['0_0', '0_1', '0_5', '1_0', '3_0', '5_0', '10_0', '15_0']
-    #recon_coeffs = ['0_0', '0_0005', '0_001', '0_002', '0_003', '0_005', '0_007', '0_01', '0_03', '0_05', '0_1']
-
     fair_coeffs = ['0_0', '0_1', '0_5', '1_0', '3_0', '5_0', '10_0', '15_0']
-    recon_coeffs = ['0_0', '0_001', '0_005', '0_01', '0_025', '0_05', '0_075', '0_1', '0_3', '0_5']
+    recon_coeffs = ['0_0', '0_0005', '0_001', '0_002', '0_003', '0_005', '0_007', '0_01', '0_03', '0_05', '0_07', '0_1']
 
-    sweepname = 'runp1_2_sweep_eo_042219'
-    seed = args.seed
+    #fair_coeffs = ['0_0', '0_1', '0_5', '1_0', '3_0', '5_0', '10_0', '15_0']
+    #recon_coeffs = ['0_0', '0_001', '0_005', '0_01', '0_025', '0_05', '0_075', '0_1', '0_3', '0_5']
+
+    #sweepname = 'runp1_2_sweep_eo_042219'
+    #seed = args.seed
     #runp_dir = '{}/data--runp1_2--model_adim-10--model_class-WeightedDemParMultiWassGan--model_fair_coeff-{}--model_recon_coeff-{}'
-    runp_dir = '{}/data--runp1_2--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
-    runp_dirs = [(runp_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
+    #runp_dir = '{}/data--runp1_2--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
+    #runp_dirs = [(runp_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
 
-    #sweepname = 'runagree_seed_p1_2_042019'
-    #seed = 4
-    #runagree_dir = '{}/data--runagree--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
-    #runagree_dirs = [(runagree_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
+    sweepname = 'runagree_interact_042619'
+    seed = args.seed
+    runagree_dir = '{}/data--runagree--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
+    runagree_dirs = [(runagree_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
 
     #expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runp_dirs]
-    expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runp_dirs]
+    expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runagree_dirs]
 
     score_mat = []
 
