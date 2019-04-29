@@ -13,4 +13,4 @@ module load cuda/9.0-fasrc02 cudnn/7.4.1.5_cuda9.0-fasrc01
 
 source activate tf1.12_cuda9
 
-python get_best_epochs.py --seed ${SLURM_ARRAY_TASK_ID}
+python src/testing/get_best_epochs.py --seed ${SLURM_ARRAY_TASK_ID}
