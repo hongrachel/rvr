@@ -4,7 +4,7 @@
 #SBATCH -J runget_best_epochs
 #SBATCH -t 0-01:00
 #SBATCH -p shared
-#SBATCH --mem=2000
+#SBATCH --mem=1000
 #SBATCH -o outfiles/slurm-%A-%a.out # STDOUT
 #SBATCH -e outfiles/slurm-%A-%a.err # STDERR
 
