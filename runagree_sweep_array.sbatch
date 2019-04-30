@@ -2,10 +2,10 @@
 # runagree_sweep_array.sbatch
 #
 #SBATCH -J runagree
-#SBATCH -t 0-08:00
+#SBATCH -t 0-06:00
 #SBATCH -p fas_gpu
 #SBATCH --gres=gpu
-#SBATCH --mem=2000
+#SBATCH --mem=1500
 #SBATCH -o outfiles/slurm-%A-%a.out # STDOUT
 #SBATCH -e outfiles/slurm-%A-%a.err # STDERR
 
