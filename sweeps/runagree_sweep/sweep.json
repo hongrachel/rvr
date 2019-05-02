@@ -1,5 +1,5 @@
 {
-    "sweep_name": "runagree_interact_042919_prod_thresh",
+    "sweep_name": "runagree_interact_050219_prod",
     "script": ["src/run_laftr.py", "src/run_unf_clf.py"],
     "config": "sweeps/runagree_sweep/config.json",
     "n_proc": 15,

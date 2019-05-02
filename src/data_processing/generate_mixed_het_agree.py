@@ -266,7 +266,7 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_in
 
 if __name__ == '__main__':
     # Save file name:
-    outfile = 'run_agree_interact_042919_prod_thresh'
+    outfile = 'run_agree_interact_050219_prod'
 
     # Set parameters for run
     np.random.seed(0)
@@ -279,8 +279,8 @@ if __name__ == '__main__':
     eta = 2 # window size for non-comman covariates
     beta_min = 0.25 # beta window minimum
     beta_max = 2 # beta window maximum
-    num_int_prod = 2 # number of interaction terms based on the product of two covariates
-    num_int_thresh = 2 # number of interaction terms based on whether two covariates are above a threshold
+    num_int_prod = 1 # number of interaction terms based on the product of two covariates
+    num_int_thresh = 0 # number of interaction terms based on whether two covariates are above a threshold
     int_thresh = 0 # threshold of interest for the interaction terms
     beta_int_min = 0.25 # interaction term beta window minimum
     beta_int_max = 1 # interaction term beta window maximum
