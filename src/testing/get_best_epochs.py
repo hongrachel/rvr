@@ -174,7 +174,7 @@ if __name__ == '__main__':
     #runp_dirs = [(runp_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
 
-    sweepname = 'runagree_interact_042919_prod_thresh'
+    sweepname = 'runagree_interact_050219_prod'
     seed = args.seed
     runagree_dir = '{}/data--runagree--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
     runagree_dirs = [(runagree_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
