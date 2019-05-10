@@ -60,9 +60,9 @@ def get_npz_basename(name, biased, even, **kwargs):
     elif name == 'runhet':
         basename = 'run_het.npz'
     elif name == 'runp1_2':
-        basename = 'run_p1_2_042219.npz'
+        basename = 'run_agree_no_interact_050919.npz'  #'run_p1_2_042219.npz'
     elif name == 'runp1_p5':
         basename = 'run_p1_p5.npz'
     elif name == 'runagree':
-        basename = 'run_agree_interact_050219_prod.npz'
+        basename = 'run_agree_interact_050919_prod.npz'
     return basename
