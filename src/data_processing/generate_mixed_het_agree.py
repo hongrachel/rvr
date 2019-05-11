@@ -74,7 +74,7 @@ def compute_label_interact(x_vec, beta_vec, int_thresh, interaction_prod, intera
 
 
 def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_int_prod, num_int_thresh, int_thresh,
-                    beta_int_min, beta_int_max, outfile):
+                    beta_int_min, beta_int_max, random_seed, outfile):
 
     interaction_prod = True if num_int_prod > 0 else False
     interaction_thresh = True if num_int_thresh > 0 else False
@@ -259,17 +259,19 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_in
              c_idx=c_idx, beta_vec_list=beta_vec_list, c_idx_int_prod=c_idx_int_prod, c_idx_int_thresh=c_idx_int_thresh,
              k=k, eps=eps, eta=eta, beta_min=beta_min, beta_max=beta_max, num_int_prod=num_int_prod,
              num_int_thresh=num_int_thresh, int_thresh=int_thresh, beta_int_min=beta_int_min, beta_int_max=beta_int_max,
-             beta_vec_list_int_prod=beta_vec_list_int_prod, beta_vec_list_int_thresh=beta_vec_list_int_thresh)
+             beta_vec_list_int_prod=beta_vec_list_int_prod, beta_vec_list_int_thresh=beta_vec_list_int_thresh,
+             random_seed=random_seed)
 
 
 
 
 if __name__ == '__main__':
     # Save file name:
-    outfile = 'run_agree_no_interact_050919'
+    outfile = 'run_agree_interact_051019_prod'
 
     # Set parameters for run
-    np.random.seed(0)
+    random_seed = 1
+    np.random.seed(random_seed)
     K = 5 # Total number of studies
     K_train = K-1 # number of training studies
     nk = np.ones(K)*5000 #5000 # number of observations per study, currently all same
@@ -279,7 +281,7 @@ if __name__ == '__main__':
     eta = 2 # window size for non-comman covariates
     beta_min = 0.25 # beta window minimum
     beta_max = 2 # beta window maximum
-    num_int_prod = 0 # number of interaction terms based on the product of two covariates
+    num_int_prod = 1 # number of interaction terms based on the product of two covariates
     num_int_thresh = 0 # number of interaction terms based on whether two covariates are above a threshold
     int_thresh = 0 # threshold of interest for the interaction terms
     beta_int_min = 0.25 # interaction term beta window minimum
@@ -297,4 +299,4 @@ if __name__ == '__main__':
 
     multi_study_sim(k=K, nk=nk, p=p, p_c=p_c, mu=mu, sig=sig, eps=eps, eta=eta, beta_min=beta_min, beta_max=beta_max,
                     num_int_prod=num_int_prod, num_int_thresh=num_int_thresh, int_thresh=int_thresh,
-                    beta_int_min=beta_int_min, beta_int_max=beta_int_max, outfile=outfile)
+                    beta_int_min=beta_int_min, beta_int_max=beta_int_max, random_seed=random_seed, outfile=outfile)
