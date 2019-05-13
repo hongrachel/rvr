@@ -64,5 +64,5 @@ def get_npz_basename(name, biased, even, **kwargs):
     elif name == 'runp1_p5':
         basename = 'run_p1_p5.npz'
     elif name == 'runagree':
-        basename = 'run_agree_interact_051019_prod.npz'
+        basename = 'run_agree_interact_051319_thresh.npz'
     return basename
