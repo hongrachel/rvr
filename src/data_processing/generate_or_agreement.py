@@ -160,10 +160,10 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, random
 
 if __name__ == '__main__':
     # Save file name:
-    outfile = 'run_orfunc_051319'
+    outfile = 'run_orfunc_051419'
 
     # Set parameters for run
-    random_seed = 1
+    random_seed = 2
     np.random.seed(random_seed)
     K = 5 # Total number of studies
     K_train = K-1 # number of training studies
