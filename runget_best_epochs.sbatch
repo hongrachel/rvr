@@ -2,7 +2,7 @@
 # runget_best_epochs.sbatch
 #
 #SBATCH -J runget_best_epochs
-#SBATCH -t 0-00:30
+#SBATCH -t 0-00:20
 #SBATCH -p shared
 #SBATCH --mem=1000
 #SBATCH -o outfiles/slurm-%A-%a.out # STDOUT
