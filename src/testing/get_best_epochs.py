@@ -181,7 +181,7 @@ if __name__ == '__main__':
 
     orfunc = True
     if orfunc:
-        sweepname = 'runorfunc_051319'
+        sweepname = 'runorfunc_051419'
         seed = args.seed
         runagree_dir = '{}/data--runorfunc--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
         runagree_dirs = [(runagree_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
