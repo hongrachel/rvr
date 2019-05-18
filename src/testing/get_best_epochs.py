@@ -161,8 +161,11 @@ if __name__ == '__main__':
     #fair_coeffs = ['0_0', '0_1', '0_5', '1_0', '3_0', '5_0', '10_0', '15_0']
     #recon_coeffs = ['0_0', '0_0005', '0_001', '0_002', '0_003', '0_005', '0_007', '0_01', '0_03', '0_05', '0_1', '0_7']
 
-    fair_coeffs = ['0_0', '0_5', '1_0', '3_0', '5_0', '10_0', '15_0']
-    recon_coeffs = ['0_0', '0_002', '0_005', '0_01', '0_03', '0_05', '0_07', '0_1']
+    # STANDARD PREVIOUSLY: #fair_coeffs = ['0_0', '0_5', '1_0', '3_0', '5_0', '10_0', '15_0']
+    #recon_coeffs = ['0_0', '0_002', '0_005', '0_01', '0_03', '0_05', '0_07', '0_1']
+
+    fair_coeffs = ['0_0', '1_0', '3_0', '5_0', '10_0', '15_0']
+    recon_coeffs = ['0_0', '0_005', '0_01', '0_03', '0_05', '0_07', '0_1']
 
     #fair_coeffs = ['0_0', '0_1', '0_5', '1_0', '3_0', '5_0', '10_0', '15_0']
     #recon_coeffs = ['0_0', '0_001', '0_005', '0_01', '0_025', '0_05', '0_075', '0_1', '0_3', '0_5']
@@ -174,12 +177,12 @@ if __name__ == '__main__':
     #runp_dirs = [(runp_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
 
-    sweepname = 'runagree_interact_051319_thresh'
+    sweepname = 'runagree_large_interact_051019_prod'
     seed = args.seed
     runagree_dir = '{}/data--runagree--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
     runagree_dirs = [(runagree_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
-    orfunc = True
+    orfunc = False
     if orfunc:
         sweepname = 'runorfunc_051419'
         seed = args.seed
