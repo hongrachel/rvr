@@ -1,7 +1,7 @@
 "xdim": 30,
-"zdim": 10,
+"zdim": 30,
 "hidden_layer_specs": {
-    "enc": [10],
+    "enc": [60, 60],
     "cla": [10],
     "rec": [10],
     "aud": [10]
