@@ -2,7 +2,7 @@
 # runorfunc_sweep_array.sbatch
 #
 #SBATCH -J runorfunc
-#SBATCH -t 0-12:00
+#SBATCH -t 0-18:00
 #SBATCH -p fas_gpu
 #SBATCH --gres=gpu
 #SBATCH --mem=1500
