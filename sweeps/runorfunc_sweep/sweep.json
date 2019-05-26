@@ -1,5 +1,5 @@
 {
-    "sweep_name": "runorfunc_all6060_051419",
+    "sweep_name": "runorfunc_all6060_051319",
     "script": ["src/run_laftr.py", "src/run_unf_clf.py"],
     "config": "sweeps/runorfunc_sweep/config.json",
     "n_proc": 15,
