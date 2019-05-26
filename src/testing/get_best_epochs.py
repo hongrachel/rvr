@@ -177,14 +177,14 @@ if __name__ == '__main__':
     #runp_dirs = [(runp_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
 
-    sweepname = 'runagree_large_no_interact_050919'
+    sweepname = 'runagree_all6060_no_interact_050919'
     seed = args.seed
     runagree_dir = '{}/data--runagree--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
     runagree_dirs = [(runagree_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
-    orfunc = True
+    orfunc = False
     if orfunc:
-        sweepname = 'runorfunc_large_051419'
+        sweepname = 'runorfunc_all6060_051419'
         seed = args.seed
         runagree_dir = '{}/data--runorfunc--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
         runagree_dirs = [(runagree_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
