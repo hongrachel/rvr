@@ -177,18 +177,19 @@ if __name__ == '__main__':
     #runp_dirs = [(runp_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
 
-    sweepname = 'runagree_all6060_interact_042919_thresh'
+    sweepname = 'runagree_all6060_interact_052619_prod_10'
     seed = args.seed
-    runagree_dir = '{}/data--runagree--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
-    runagree_dirs = [(runagree_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
+    adim = 10
+    runagree_dir = '{}/data--runagree--model_adim-{}--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
+    runagree_dirs = [(runagree_dir.format(sweepname, adim, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
-    orfunc = True
+    orfunc = False
     if orfunc:
         sweepname = 'runorfunc_all6060_052619_10'
         adim = 10
         seed = args.seed
         runagree_dir = '{}/data--runorfunc--model_adim-{}--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
-        runagree_dirs = [(runagree_dir.format(adim, sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
+        runagree_dirs = [(runagree_dir.format(sweepname, adim, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
     #expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runp_dirs]
     expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runagree_dirs]
