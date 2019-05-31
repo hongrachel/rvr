@@ -184,10 +184,11 @@ if __name__ == '__main__':
 
     orfunc = True
     if orfunc:
-        sweepname = 'runorfunc_all6060_051319'
+        sweepname = 'runorfunc_all6060_052619_10'
+
         seed = args.seed
-        runagree_dir = '{}/data--runorfunc--model_adim-4--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
-        runagree_dirs = [(runagree_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
+        runagree_dir = '{}/data--runorfunc--model_adim-{}--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
+        runagree_dirs = [(runagree_dir.format(adim, sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
     #expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runp_dirs]
     expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runagree_dirs]
