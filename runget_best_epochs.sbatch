@@ -2,7 +2,7 @@
 # runget_best_epochs.sbatch
 #
 #SBATCH -J runget_best_epochs
-#SBATCH -t 0-00:30
+#SBATCH -t 0-00:10
 #SBATCH -p shared
 #SBATCH --mem=1000
 #SBATCH -o outfiles/slurm-%A-%a.out # STDOUT
@@ -13,4 +13,4 @@ module load cuda/9.0-fasrc02 cudnn/7.4.1.5_cuda9.0-fasrc01
 
 source activate tf1.12_cuda9
 
-python src/testing/get_best_epochs.py --exp runagree_all6060_interact_042919_thresh --adim 4 --seed ${SLURM_ARRAY_TASK_ID}
+python src/testing/get_best_epochs.py --exp runorfunc_all6060_051319 --adim 4 --seed ${SLURM_ARRAY_TASK_ID}
