@@ -120,7 +120,9 @@ if __name__ == '__main__':
         
     '''
     parser = argparse.ArgumentParser()
+    parser.add_argument('--exp', help='name of experiment')
     parser.add_argument('--seed', type=int, help='random seed value')
+    parser.add_argument('--adim', type=int, help='attribute vector dimension')
     args=parser.parse_args()
 
     on_laptop = False
@@ -177,16 +179,16 @@ if __name__ == '__main__':
     #runp_dirs = [(runp_dir.format(sweepname, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
 
-    sweepname = 'runagree_all6060_interact_052619_prod_10'
+    sweepname = args.exp #'runagree_all6060_interact_052619_prod_10'
     seed = args.seed
-    adim = 10
+    adim = args.adim
     runagree_dir = '{}/data--runagree--model_adim-{}--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
     runagree_dirs = [(runagree_dir.format(sweepname, adim, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
     orfunc = False
     if orfunc:
-        sweepname = 'runorfunc_all6060_052619_10'
-        adim = 10
+        sweepname = args.exp #'runorfunc_all6060_052619_10'
+        adim = args.adim
         seed = args.seed
         runagree_dir = '{}/data--runorfunc--model_adim-{}--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
         runagree_dirs = [(runagree_dir.format(sweepname, adim, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
@@ -195,6 +197,7 @@ if __name__ == '__main__':
     expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runagree_dirs]
 
     score_mat = []
+    valid_score_mat = []
 
     for d, gamma, beta in expdirs:
         best_epoch, best_err = get_best_epoch_erry(d)
@@ -207,12 +210,15 @@ if __name__ == '__main__':
         #print('Gamma: {} Beta: {}'.format(gamma, beta))
         #print(err, classce, discce)
         score_mat.append(err)
+        valid_score_mat.append(best_err)
 
-    score_mat = np.reshape(np.array(score_mat), (len(fair_coeffs), -1))
+    #score_mat = np.reshape(np.array(score_mat), (len(fair_coeffs), -1))
+    valid_score_mat = np.reshape(np.array(valid_score_mat), (len(fair_coeffs), -1))
 
-    print(score_mat)
+    #print(score_mat)
 
-    np.save('{}_{}_score_mat.npy'.format(sweepname, seed), score_mat)
+    #np.save('{}_{}_score_mat.npy'.format(sweepname, seed), score_mat)
+    np.save('{}_{}_valid_score_mat.npy'.format(sweepname, seed), valid_score_mat)
 
     save_csv = False
     if save_csv:
