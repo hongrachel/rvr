@@ -13,4 +13,4 @@ module load cuda/9.0-fasrc02 cudnn/7.4.1.5_cuda9.0-fasrc01
 
 source activate tf1.12_cuda9
 
-python src/testing/get_best_epochs.py --exp runorfunc_all6060_051319 --adim 4 --seed ${SLURM_ARRAY_TASK_ID}
+python src/testing/get_best_epochs.py --exp runagree_seed_p1_2_042019 --adim 4 --seed ${SLURM_ARRAY_TASK_ID}
