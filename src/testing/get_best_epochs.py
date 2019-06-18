@@ -216,12 +216,12 @@ if __name__ == '__main__':
         score_mat.append(err)
         valid_score_mat.append(best_err)
 
-    #score_mat = np.reshape(np.array(score_mat), (len(fair_coeffs), -1))
+    score_mat = np.reshape(np.array(score_mat), (len(fair_coeffs), -1))
     valid_score_mat = np.reshape(np.array(valid_score_mat), (len(fair_coeffs), -1))
 
     #print(score_mat)
 
-    #np.save('{}_{}_score_mat.npy'.format(sweepname, seed), score_mat)
+    np.save('{}_{}_score_mat.npy'.format(sweepname, seed), score_mat)
     np.save('{}_{}_valid_score_mat.npy'.format(sweepname, seed), valid_score_mat)
 
     save_csv = False
