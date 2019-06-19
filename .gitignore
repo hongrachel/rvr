@@ -5,5 +5,4 @@ plots/*
 *.DS_Store
 *.swp
 *.pyc
-data/*
 outfiles/*
