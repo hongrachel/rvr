@@ -67,4 +67,6 @@ def get_npz_basename(name, biased, even, **kwargs):
         basename ='run_agree_interact_common_20_061619_prod_2_10.npz'
     elif name == 'runorfunc':
         basename ='run_orfunc_no_br_061019_adim_10.npz'
+    elif name == 'bcesets':
+        basename = 'bcenew.npz'
     return basename
