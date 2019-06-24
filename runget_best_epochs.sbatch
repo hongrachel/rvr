@@ -11,4 +11,4 @@
 module load Anaconda3/5.0.1-fasrc01
 module load cuda/9.0-fasrc02 cudnn/7.4.1.5_cuda9.0-fasrc01
 
-python src/testing/get_best_epochs.py --exp runagree_all6060_interact_common_20_061619_prod_2_10 --adim 10 --seed ${SLURM_ARRAY_TASK_ID}
+python src/testing/get_best_epochs.py --exp bcesets_nodes_120_60_40 --adim 3 --seed ${SLURM_ARRAY_TASK_ID}

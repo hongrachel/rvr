@@ -197,6 +197,14 @@ if __name__ == '__main__':
         runagree_dir = '{}/data--runorfunc--model_adim-{}--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
         runagree_dirs = [(runagree_dir.format(sweepname, adim, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
 
+    bcesets = True
+    if bcesets:
+        sweepname = args.exp #'runorfunc_all6060_052619_10'
+        adim = args.adim
+        seed = args.seed
+        runagree_dir = '{}/data--bcesets--model_adim-{}--model_class-MultiEqOddsUnweightedWassGan--model_fair_coeff-{}--model_recon_coeff-{}--model_seed-{}'
+        runagree_dirs = [(runagree_dir.format(sweepname, adim, gamma, beta, seed), gamma, beta) for gamma, beta in itertools.product(fair_coeffs, recon_coeffs)]
+
     #expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runp_dirs]
     expdirs = [(os.path.join(expdir, d), gamma, beta) for d, gamma, beta in runagree_dirs]
 
