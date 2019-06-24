@@ -68,5 +68,5 @@ def get_npz_basename(name, biased, even, **kwargs):
     elif name == 'runorfunc':
         basename ='run_orfunc_no_br_061019_adim_10.npz'
     elif name == 'bcesets':
-        basename = 'bcenew.npz'
+        basename = 'bcetest_to_001.npz'
     return basename
