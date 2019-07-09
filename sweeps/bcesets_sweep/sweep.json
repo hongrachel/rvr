@@ -1,5 +1,5 @@
 {
-    "sweep_name": "bcesets_nodes_120_60_40_test_to_001",
+    "sweep_name": "bcesets_nodes_120_60_40_test_to_001_REAL",
     "script": ["src/run_laftr.py", "src/run_unf_clf.py"],
     "config": "sweeps/bcesets_sweep/config.json",
     "n_proc": 15,

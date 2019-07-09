@@ -2,7 +2,7 @@
 # runbce_sweep_array.sbatch
 #
 #SBATCH -J runbce
-#SBATCH -t 0-15:00
+#SBATCH -t 0-2:00
 #SBATCH -p fas_gpu
 #SBATCH --gres=gpu
 #SBATCH --mem=1500
