@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import tensorflow as tf
 
-from codebase.mlp import MLP
+from codebase.mlp import MLP, CNNEncoder, CNNDecoder
 
 # defaults
 EPS = 1e-8
@@ -194,6 +194,83 @@ class EqOddsUnweightedGan(DemParGan):
                       shapes=[self.zdim +  1 * self.ydim] + self.hidden_layer_specs['aud'] + [self.adim],
                       activ=ACTIV)
             return mlp.forward(inputs)
+
+###################################################
+########  CNN version of DemParGan  ###############
+###################################################
+
+class CNNDemParGan(AbstractBaseNet):
+    def _define_vars(self):
+        assert(
+                isinstance(self.hidden_layer_specs, dict) and
+                all([net_name in self.hidden_layer_specs for net_name in ['enc', 'cla', 'aud', 'rec']])
+        )
+        self.X = tf.placeholder("float", [None, self.xdim], name='X')
+        self.Y = tf.placeholder("float", [None, self.ydim], name='Y')
+        self.A = tf.placeholder("float", [None, self.adim], name='A')
+        self.epoch = tf.placeholder("float", [1], name='epoch')
+        return
+
+    def _get_latents(self, inputs, scope_name='model/enc_cla', reuse=False):
+        with tf.variable_scope(scope_name, reuse=reuse):
+            cnn = CNNEncoder(name='inputs_to_latents',
+                      shapes=[self.xdim] + self.hidden_layer_specs['enc'] + [self.zdim],
+                      activ=ACTIV)
+            return cnn.forward(inputs)
+
+    def _get_class_logits(self, latents, scope_name='model/enc_cla', reuse=False):
+        with tf.variable_scope(scope_name, reuse=reuse):
+            mlp = MLP(name='latents_to_class_logits',
+                      shapes=[self.zdim] + self.hidden_layer_specs['cla'] + [self.ydim],
+                      activ=ACTIV)
+            return mlp.forward(latents)
+
+    def _get_sensitive_logits(self, latents, scope_name='model/aud', reuse=False):
+        with tf.variable_scope(scope_name, reuse=reuse):
+            mlp = MLP(name='latents_to_sensitive_logits',
+                      shapes=[self.zdim] + self.hidden_layer_specs['aud'] + [self.adim],
+                      activ=ACTIV)
+            return mlp.forward(latents)
+
+    def _get_recon_inputs(self, latents, scope_name='model/enc_cla'):
+        with tf.variable_scope(scope_name):
+            # TODO: change this to CNNDecoder once that's implemented and working
+            mlp = MLP(name='latents_to_reconstructed_inputs',
+                      shapes=[self.zdim + self.adim] + self.hidden_layer_specs['rec'] + [self.xdim],
+                      activ=ACTIV)
+            Z_and_A = tf.concat([self.Z, self.A], axis=1)
+            final_reps = mlp.forward(Z_and_A)
+            return final_reps
+
+    def _get_class_loss(self, Y_hat, Y):
+        return cross_entropy(Y, Y_hat)
+
+    def _get_recon_loss(self, X_hat, X):
+        return tf.reduce_mean(tf.square(X - X_hat), axis=1)
+
+    def _get_aud_loss(self, A_hat, A):
+        return cross_entropy(A, A_hat)
+
+    def _get_weight_decay(self):
+        var_list = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='model/aud')
+        weights_norm = [tf.reduce_sum(tf.square(w)) for w in var_list]
+        weight_norm_tensor = tf.stack(weights_norm)
+        return tf.reduce_sum(weight_norm_tensor)
+
+    def _get_loss(self):  # produce losses for the fairness task
+        return tf.reduce_mean([
+            self.class_coeff*self.class_loss,
+            self.recon_coeff*self.recon_loss,
+            -self.fair_coeff*self.aud_loss
+        ])
+
+    def _get_class_preds_from_logits(self, logits):
+        return tf.nn.sigmoid(logits)
+
+    def _get_aud_preds_from_logits(self, logits):
+        return tf.nn.sigmoid(logits)
+
+
 
 
 class EqoppUnweightedGan(DemParGan):

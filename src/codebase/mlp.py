@@ -42,3 +42,60 @@ class MLP(object):
             prev_L = L
         L = tf.add(tf.matmul(prev_L, self.weights[num_layers - 1]['w']), self.weights[num_layers - 1]['b'])
         return L
+
+class CNNEncoder(object):
+    def __init__(self, name, shapes, activ):
+        self.name = name
+        self.shapes = shapes
+        self.weights = self.make_wts_biases()
+        self.activ = activ
+
+    def make_wts_biases(self):
+        model = tf.keras.Sequential()
+        model.add(tf.keras.layers.Conv2D(32, (4, 4), strides=(2, 2), padding='same'))
+        model.add(tf.keras.layers.BatchNormalization(axis=-1))
+        model.add(tf.keras.layers.ReLU())
+        #model.add(tf.keras.layers.Dropout(0.3))
+
+        model.add(tf.keras.layers.Conv2D(32, (4, 4), strides=(2, 2), padding='same'))
+        model.add(tf.keras.layers.BatchNormalization(axis=-1))
+        model.add(tf.keras.layers.ReLU())
+        #model.add(tf.keras.layers.Dropout(0.3))
+
+
+        model.add(tf.keras.layers.Conv2D(64, (4, 4), strides=(2, 2), padding='same'))
+        model.add(tf.keras.layers.BatchNormalization(axis=-1))
+        model.add(tf.keras.layers.ReLU())
+
+        model.add(tf.keras.layers.Conv2D(64, (4, 4), strides=(2, 2), padding='same'))
+        model.add(tf.keras.layers.BatchNormalization(axis=-1))
+        model.add(tf.keras.layers.ReLU())
+
+        model.add(tf.keras.layers.Conv2D(512, (4, 4)) )
+        model.add(tf.keras.layers.BatchNormalization(axis=-1))
+        model.add(tf.keras.layers.ReLU())
+
+        model.add(tf.keras.layers.Conv2D(self.shapes[-1], (1,1)) )
+
+
+        #model.add(tf.keras.layers.Flatten())
+        #model.add(tf.keras.layers.Dense(1))
+
+        return model
+
+    def forward(self, x):
+        self.weights(x)
+
+class CNNDecoder(object):
+    def __init__(self, name, shapes, activ):
+        self.name = name
+        self.shapes = shapes
+        self.weights = self.make_wts_biases()
+        self.activ = activ
+
+    def make_wts_biases(self):
+        #Todo
+
+    def forward(self, x):
+        #Todo
+
