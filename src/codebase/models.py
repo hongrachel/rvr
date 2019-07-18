@@ -205,7 +205,7 @@ class CNNDemParGan(AbstractBaseNet):
                 isinstance(self.hidden_layer_specs, dict) and
                 all([net_name in self.hidden_layer_specs for net_name in ['enc', 'cla', 'aud', 'rec']])
         )
-        self.X = tf.placeholder("float", [None, self.xdim], name='X')
+        self.X = tf.placeholder("float", [None, 4096], name='X')
         self.Y = tf.placeholder("float", [None, self.ydim], name='Y')
         self.A = tf.placeholder("float", [None, self.adim], name='A')
         self.epoch = tf.placeholder("float", [1], name='epoch')
@@ -234,12 +234,11 @@ class CNNDemParGan(AbstractBaseNet):
 
     def _get_recon_inputs(self, latents, scope_name='model/enc_cla'):
         with tf.variable_scope(scope_name):
-            # TODO: change this to CNNDecoder once that's implemented and working
-            mlp = MLP(name='latents_to_reconstructed_inputs',
+            cnn = CNNDecoder(name='latents_to_reconstructed_inputs',
                       shapes=[self.zdim + self.adim] + self.hidden_layer_specs['rec'] + [self.xdim],
                       activ=ACTIV)
             Z_and_A = tf.concat([self.Z, self.A], axis=1)
-            final_reps = mlp.forward(Z_and_A)
+            final_reps = cnn.forward(Z_and_A)
             return final_reps
 
     def _get_class_loss(self, Y_hat, Y):
@@ -271,7 +270,17 @@ class CNNDemParGan(AbstractBaseNet):
         return tf.nn.sigmoid(logits)
 
 
+class CNNEqOddsUnweightedGan(CNNDemParGan):
+    """Like DemParGan, but auditor gets to use the label Y as well"""
+    def _get_aud_inputs(self):
+        return tf.concat([self.Z, self.Y], axis=1)
 
+    def _get_sensitive_logits(self, inputs, scope_name='model/aud', reuse=False):
+        with tf.variable_scope(scope_name, reuse=reuse):
+            mlp = MLP(name='latents_to_sensitive_logits',
+                      shapes=[self.zdim +  1 * self.ydim] + self.hidden_layer_specs['aud'] + [self.adim],
+                      activ=ACTIV)
+            return mlp.forward(inputs)
 
 class EqoppUnweightedGan(DemParGan):
     """Like DemParGan, but only using Y = 0 examples"""
@@ -317,6 +326,15 @@ class DemParWassGan(WassGan, DemParGan):
 
     def _get_aud_loss(self, A_hat, A):
         return WassGan._get_aud_loss(self, A_hat, A)
+
+class CNNMultiWassGan(MultiWassGan, CNNEqOddsUnweightedGan):
+    """Like MultiWassGan, but auditor gets to use the label Y as well"""
+    def _get_class_loss(self, Y_hat, Y):
+        return MultiWassGan._get_class_loss(self, Y_hat, Y)
+
+    def _get_aud_loss(self, A_hat, A):
+        return MultiWassGan._get_aud_loss(self, A_hat, A)
+
 
 
 class EqOddsUnweightedWassGan(WassGan, EqOddsUnweightedGan):

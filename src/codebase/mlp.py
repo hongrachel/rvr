@@ -1,4 +1,5 @@
 import tensorflow as tf
+from tensorflow.keras.layers import Activation
 
 
 class MLP(object):
@@ -54,26 +55,31 @@ class CNNEncoder(object):
         model = tf.keras.Sequential()
         model.add(tf.keras.layers.Conv2D(32, (4, 4), strides=(2, 2), padding='same'))
         model.add(tf.keras.layers.BatchNormalization(axis=-1))
-        model.add(tf.keras.layers.ReLU())
+        #model.add(tf.keras.layers.ReLU())
+        model.add(Activation('relu'))
         #model.add(tf.keras.layers.Dropout(0.3))
 
         model.add(tf.keras.layers.Conv2D(32, (4, 4), strides=(2, 2), padding='same'))
         model.add(tf.keras.layers.BatchNormalization(axis=-1))
-        model.add(tf.keras.layers.ReLU())
+        #model.add(tf.keras.layers.ReLU())
+        model.add(Activation('relu'))
         #model.add(tf.keras.layers.Dropout(0.3))
 
 
         model.add(tf.keras.layers.Conv2D(64, (4, 4), strides=(2, 2), padding='same'))
         model.add(tf.keras.layers.BatchNormalization(axis=-1))
-        model.add(tf.keras.layers.ReLU())
+        # model.add(tf.keras.layers.ReLU())
+        model.add(Activation('relu'))
 
         model.add(tf.keras.layers.Conv2D(64, (4, 4), strides=(2, 2), padding='same'))
         model.add(tf.keras.layers.BatchNormalization(axis=-1))
-        model.add(tf.keras.layers.ReLU())
+        model.add(Activation('relu'))
+        # model.add(tf.keras.layers.ReLU())
 
         model.add(tf.keras.layers.Conv2D(512, (4, 4)) )
         model.add(tf.keras.layers.BatchNormalization(axis=-1))
-        model.add(tf.keras.layers.ReLU())
+        # model.add(tf.keras.layers.ReLU())
+        model.add(Activation('relu'))
 
         model.add(tf.keras.layers.Conv2D(self.shapes[-1], (1,1)) )
 
@@ -84,7 +90,9 @@ class CNNEncoder(object):
         return model
 
     def forward(self, x):
-        self.weights(x)
+        x = tf.reshape(x, [-1, 64, 64, 1])
+        out = self.weights(x)
+        return tf.reshape(out, [-1, 10])
 
 class CNNDecoder(object):
     def __init__(self, name, shapes, activ):
@@ -94,8 +102,44 @@ class CNNDecoder(object):
         self.activ = activ
 
     def make_wts_biases(self):
-        #Todo
+        model = tf.keras.Sequential()
+
+        # model.add(tf.image.resize_nearest_neighbor(size=()))
+        # model.add(tf.keras.layers.Dense(4*4))
+        # model.add(tf.keras.layers.BatchNormalization())
+        # model.add(Activation('relu'))
+
+        # model.add(tf.keras.layers.Reshape((4, 4, 1)))
+        # assert model.output_shape == (None, 4, 4, 1)
+
+        model.add(tf.keras.layers.Conv2DTranspose(512, 1, 1, padding='valid'))
+        model.add(tf.keras.layers.BatchNormalization(axis=-1))
+        model.add(Activation('relu'))
+
+
+        model.add(tf.keras.layers.Conv2DTranspose(64, 4, 1, padding='valid'))
+        model.add(tf.keras.layers.BatchNormalization(axis=-1))
+        model.add(Activation('relu'))
+
+        model.add(tf.keras.layers.Conv2DTranspose(64, 4, 2, padding='same'))
+        model.add(tf.keras.layers.BatchNormalization(axis=-1))
+        model.add(Activation('relu'))
+
+        model.add(tf.keras.layers.Conv2DTranspose(32, 4, 2, padding='same'))
+        model.add(tf.keras.layers.BatchNormalization(axis=-1))
+        model.add(Activation('relu'))
+
+        model.add(tf.keras.layers.Conv2DTranspose(32, 4, 2, padding='same'))
+        model.add(tf.keras.layers.BatchNormalization(axis=-1))
+        model.add(Activation('relu'))
+
+        model.add(tf.keras.layers.Conv2DTranspose(1, 4, 2, padding='same'))
+        model.add(Activation('sigmoid'))
+
+        return model
 
     def forward(self, x):
-        #Todo
+        x = tf.reshape(x, [-1, 1, 1, self.shapes[0]])
+        out = self.weights(x)
+        return tf.reshape(out, [-1, 4096])
 
