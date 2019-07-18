@@ -8,7 +8,7 @@
     "partition": "gpuc",
     "templates": {
         "data": ["shapes"],
-        "dirs": "local"
+        "dirs": "odyssey"
     },
     "overrides": {
         "model": {
