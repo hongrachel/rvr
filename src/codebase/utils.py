@@ -71,4 +71,6 @@ def get_npz_basename(name, biased, even, **kwargs):
         basename = 'bcesets_test_to_001_REAL.npz'
     elif name == 'shapes':
         basename = 'shapes_071719.npz'
+    elif name == 'mnist':
+        basename = 'mnist_071919.npz'
     return basename
