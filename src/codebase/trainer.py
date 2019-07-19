@@ -254,6 +254,9 @@ class Trainer(object):
                 # run tester.evaluate
                 tester.evaluate(self.batch_size, phase='test', save=not self.regbas)
 
+                # save model
+                save_path = self.saver.save(self.sess, os.path.join(new_dname_v, 'model.ckpt'))
+
             if not self.regbas:
                 from codebase.models import WeightedDemParWassGpGan
                 if isinstance(self.model, WeightedDemParWassGpGan):
