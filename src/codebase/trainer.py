@@ -233,7 +233,7 @@ class Trainer(object):
                 summary.value.add(tag="DP", simple_value=demo_dispar)
                 print('DP: ', demo_dispar)
 
-            if epoch % 50 == 0 and not self.regbas:
+            if epoch % 500 == 0 and not self.regbas:
                 # Valid set
                 # create a new folder to log in
                 new_dname_v = os.path.join(self.expdir, 'checkpoints', 'Epoch_{:d}_Valid'.format(epoch))

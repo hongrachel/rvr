@@ -205,7 +205,7 @@ class CNNDemParGan(AbstractBaseNet):
                 isinstance(self.hidden_layer_specs, dict) and
                 all([net_name in self.hidden_layer_specs for net_name in ['enc', 'cla', 'aud', 'rec']])
         )
-        self.X = tf.placeholder("float", [None, 4096], name='X')
+        self.X = tf.placeholder("float", [None, self.xdim], name='X')
         self.Y = tf.placeholder("float", [None, self.ydim], name='Y')
         self.A = tf.placeholder("float", [None, self.adim], name='A')
         self.epoch = tf.placeholder("float", [1], name='epoch')
@@ -245,7 +245,10 @@ class CNNDemParGan(AbstractBaseNet):
         return cross_entropy(Y, Y_hat)
 
     def _get_recon_loss(self, X_hat, X):
-        return tf.reduce_mean(tf.square(X - X_hat), axis=1)
+        # return tf.reduce_mean(tf.square(X - X_hat), axis=1)
+        return tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
+            labels=X, logits=X_hat), axis=1)
+        #return tf.squeeze(cross_entropy(X, X_hat))
 
     def _get_aud_loss(self, A_hat, A):
         return cross_entropy(A, A_hat)

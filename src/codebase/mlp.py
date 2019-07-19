@@ -134,7 +134,7 @@ class CNNDecoder(object):
         model.add(Activation('relu'))
 
         model.add(tf.keras.layers.Conv2DTranspose(1, 4, 2, padding='same'))
-        model.add(Activation('sigmoid'))
+        #model.add(Activation('sigmoid'))
 
         return model
 
