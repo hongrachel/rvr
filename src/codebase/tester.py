@@ -3,6 +3,7 @@ import numpy as np
 
 
 BIG_EPOCH = 1000000
+SAVE_X_HAT = 40
 
 
 class Tester(object):
@@ -73,7 +74,7 @@ class Tester(object):
         A_hat = A_hats
         A = As
         Z = Zs
-        X_hat = X_hats
+        X_hat = X_hats[:SAVE_X_HAT]
 
         tensorD = {}
         tensorD['Y_hat'] = Y_hat

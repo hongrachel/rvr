@@ -2,7 +2,7 @@
 # runshapes_array.sbatch
 #
 #SBATCH -J runshapes
-#SBATCH -t 2-2:00
+#SBATCH -t 3-18:00
 #SBATCH -p fas_gpu
 #SBATCH --gres=gpu
 #SBATCH --mem=2500
