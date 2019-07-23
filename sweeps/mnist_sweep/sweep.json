@@ -12,9 +12,9 @@
     },
     "overrides": {
         "model": {
-            "fair_coeff":  [0.0, 10.0],
-            "recon_coeff": [0.0, 0.005],
-            "class": ["MnistCnnMultiWassGan"],
+            "fair_coeff":  [0.0, 1.0],
+            "recon_coeff": [0.0, 0.05],
+            "class": ["MnistEqOddsCrossEntropyGan"],
             "adim": [3],
             "seed": [1]
         },

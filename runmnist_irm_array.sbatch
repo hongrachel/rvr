@@ -2,7 +2,7 @@
 # runmnist_irm_array.sbatch
 #
 #SBATCH -J runmnist_irm
-#SBATCH -t 0-22:00
+#SBATCH -t 0-14:00
 #SBATCH -p fas_gpu
 #SBATCH --gres=gpu
 #SBATCH --mem=2500

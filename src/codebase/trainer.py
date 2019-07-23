@@ -234,7 +234,7 @@ class Trainer(object):
                 print('DP: ', demo_dispar)
 
             record_interval = n_epochs // 40
-            if epoch % record_interval == 0 and not self.regbas:
+            if epoch % 2 == 0 and not self.regbas:
                 # Valid set
                 # create a new folder to log in
                 new_dname_t = os.path.join(self.expdir, 'checkpoints', 'Epoch_{:d}_Train'.format(epoch))
