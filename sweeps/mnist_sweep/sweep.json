@@ -8,7 +8,7 @@
     "partition": "gpuc",
     "templates": {
         "data": ["mnist"],
-        "dirs": "local"
+        "dirs": "odyssey"
     },
     "overrides": {
         "model": {

@@ -1,0 +1,1 @@
+python src/run_laftr.py sweeps/mnist_irm_sweep/config.json --dirs odyssey --data mnist_irm -o model.adim=2,model.class=MnistCnnMultiWassGan,model.fair_coeff=10.0,model.recon_coeff=0.005,model.seed=1,exp_name="mnist_irm_TEST/data--mnist_irm--model_adim-2--model_class-MnistCnnMultiWassGan--model_fair_coeff-10_0--model_recon_coeff-0_005--model_seed-1"
