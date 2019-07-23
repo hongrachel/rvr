@@ -1,21 +1,21 @@
 {
-    "sweep_name": "shapes_likeirm",
+    "sweep_name": "mnist_irm_TEST",
     "script": ["src/run_laftr.py", "src/run_unf_clf.py"],
-    "config": "sweeps/shapes_sweep/config.json",
+    "config": "sweeps/mnist_irm_sweep/config.json",
     "n_proc": 15,
     "xargs": false,
     "exclude_guppies": "guppy9,guppy10,guppy18,guppy25,guppy13,guppy22 ",
     "partition": "gpuc",
     "templates": {
-        "data": ["shapes"],
-        "dirs": "odyssey"
+        "data": ["mnist_irm"],
+        "dirs": "local"
     },
     "overrides": {
         "model": {
             "fair_coeff":  [0.0, 10.0],
             "recon_coeff": [0.0, 0.005],
-            "class": ["CNNMultiWassGan"],
-            "adim": [3],
+            "class": ["MnistCnnMultiWassGan"],
+            "adim": [2],
             "seed": [1]
         },
         "transfer": {

@@ -1,5 +1,5 @@
 {
-    "sweep_name": "mnist_TEST",
+    "sweep_name": "mnist_3study",
     "script": ["src/run_laftr.py", "src/run_unf_clf.py"],
     "config": "sweeps/mnist_sweep/config.json",
     "n_proc": 15,
@@ -8,13 +8,13 @@
     "partition": "gpuc",
     "templates": {
         "data": ["mnist"],
-        "dirs": "odyssey"
+        "dirs": "local"
     },
     "overrides": {
         "model": {
-            "fair_coeff":  [0.0, 0.1, 0.5],
-            "recon_coeff": [0.0, 0.00001, 0.0001, 0.001],
-            "class": ["MultiEqOddsUnweightedWassGan"],
+            "fair_coeff":  [0.0, 10.0],
+            "recon_coeff": [0.0, 0.005],
+            "class": ["MnistCnnMultiWassGan"],
             "adim": [3],
             "seed": [1]
         },

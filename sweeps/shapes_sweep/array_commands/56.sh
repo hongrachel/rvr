@@ -1,1 +1,0 @@
-python src/run_laftr.py sweeps/shapes_sweep/config.json --dirs odyssey --data shapes -o model.adim=3,model.class=CNNMultiWassGan,model.fair_coeff=15.0,model.recon_coeff=0.005,model.seed=1,exp_name="shapes_TEST/data--shapes--model_adim-3--model_class-CNNMultiWassGan--model_fair_coeff-15_0--model_recon_coeff-0_005--model_seed-1"

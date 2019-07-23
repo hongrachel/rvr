@@ -233,7 +233,15 @@ class Trainer(object):
                 summary.value.add(tag="DP", simple_value=demo_dispar)
                 print('DP: ', demo_dispar)
 
-            if epoch % 500 == 0 and not self.regbas:
+            record_interval = n_epochs // 40
+            if epoch % record_interval == 0 and not self.regbas:
+                # Valid set
+                # create a new folder to log in
+                new_dname_t = os.path.join(self.expdir, 'checkpoints', 'Epoch_{:d}_Train'.format(epoch))
+                # create reslogger for that folder
+                reslogger_t = ResultLogger(new_dname_t, self.saver)
+                reslogger_t.save_metrics(train_L)
+
                 # Valid set
                 # create a new folder to log in
                 new_dname_v = os.path.join(self.expdir, 'checkpoints', 'Epoch_{:d}_Valid'.format(epoch))
