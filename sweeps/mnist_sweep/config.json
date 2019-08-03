@@ -20,8 +20,8 @@
         "batch_size": 64,
         "regbas": false,
         "aud_steps": 1,
-        "n_epochs": 1001,
-        "patience": 1001
+        "n_epochs": 2001,
+        "patience": 2001
     },
     "transfer": {
         "batch_size": 64,
