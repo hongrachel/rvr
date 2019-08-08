@@ -233,7 +233,7 @@ class Trainer(object):
                 summary.value.add(tag="DP", simple_value=demo_dispar)
                 print('DP: ', demo_dispar)
 
-            record_interval = n_epochs // 40
+            record_interval = n_epochs // 200
             if epoch % record_interval == 0 and not self.regbas:
                 # Valid set
                 # create a new folder to log in
