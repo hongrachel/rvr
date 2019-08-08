@@ -3,7 +3,7 @@ import numpy as np
 
 
 BIG_EPOCH = 1000000
-SAVE_X_HAT = 40
+SAVE_X_HAT = -1
 
 
 class Tester(object):
