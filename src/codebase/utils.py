@@ -74,5 +74,5 @@ def get_npz_basename(name, biased, even, **kwargs):
     elif name == 'mnist_irm':
         basename = 'mnist_071919.npz'
     elif name == 'mnist':
-        basename = 'colors_smallbox_081319.npz'
+        basename = 'colors_randomloc_081419.npz'
     return basename
