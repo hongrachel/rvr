@@ -380,11 +380,13 @@ class MnistEqOddsCrossEntropyGan(CNNEqOddsUnweightedGan):
     def _get_recon_inputs(self, latents, scope_name='model/enc_cla'):
         with tf.variable_scope(scope_name):
             mlp = MLP(name='latents_to_reconstructed_inputs',
-                      shapes=[self.zdim+self.adim] + self.hidden_layer_specs['rec'] + [self.xdim],
+                      shapes=[self.zdim] + self.hidden_layer_specs['rec'] + [self.xdim],
                       activ=ACTIV)
-            Z_and_A = tf.concat([self.Z, self.A], axis=1)
-            final_reps = mlp.forward(Z_and_A)
-            return final_reps
+            # Z_and_A = tf.concat([self.Z, self.A], axis=1)
+            # final_reps = mlp.forward(Z_and_A)
+            # return final_reps
+            return mlp.forward(self.Z)
+
             # mlp = MLP(name='latents_to_reconstructed_inputs',
             #           shapes=[self.zdim + self.adim] + self.hidden_layer_specs['rec'] + [self.xdim],
             #           activ=ACTIV)
