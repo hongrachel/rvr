@@ -1,5 +1,5 @@
 {
-    "sweep_name": "mnist_no_studyid",
+    "sweep_name": "mnist_1study",
     "script": ["src/run_laftr.py", "src/run_unf_clf.py"],
     "config": "sweeps/mnist_sweep/config.json",
     "n_proc": 15,
