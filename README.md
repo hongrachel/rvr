@@ -1,21 +1,18 @@
 # Representations via Representations
 Frances Ding, Prasad Patil, Giovanni Parmigiani, Cynthia Dwork
 
-Code based on: Learning Adversarially Fair and Transferable Representations
-David Madras, Elliot Creager, Toni Pitassi, Richard Zemel
-https://arxiv.org/abs/1802.06309
+Representation via Representations is a project aimed at improving transfer learning to out-of-distribution examples. Motivated by the challenge of finding robust biomedical predictors of disease, the model leverages data from heterogenous sources to discover feature representations that allow for accurate prediction outside of the training data.
 
-LAFTR code represents equal contribution from Elliot Creager and [David Madras](https://github.com/dmadras/).
-Thanks to [Jake Snell](https://github.com/jakesnell) and [James Lucas](https://github.com/AtheMathmo) for contributing the experiment sweep code.
+This codebase owes its foundations to David Madras, Elliot Creager, Toni Pitassi, Richard Zemel in their paper Learning Adversarially Fair and Transferable Representations (https://arxiv.org/abs/1802.06309). Github link: https://github.com/VectorInstitute/laftr
 
 ## setting up a project-specific virtual env
 ```
 mkdir ~/venv 
-python3 -m venv ~/venv/laftr
+python3 -m venv ~/venv/rvr
 ```
 where `python3` points to python 3.6.X. Then
 ```
-source ~/venv/laftr/bin/activate
+source ~/venv/rvr/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
