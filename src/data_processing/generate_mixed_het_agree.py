@@ -24,11 +24,15 @@ import numpy as np
 
 def perturb_betas(beta_vec, k, c_idx, eps, eta):
     out = np.zeros((k, beta_vec.shape[0]))
+    print("perturb betas------")
+    print (beta_vec)
     for i in range(beta_vec.shape[0]): # for coefficient i
         if i in c_idx:
             out[:, i] = np.random.uniform(beta_vec[i] - eps, beta_vec[i] + eps, size=k)
         else:
             out[:, i] = np.random.uniform(beta_vec[i] - eta, beta_vec[i] + eta, size=k)
+    non_c_idx = list(set(range(beta_vec.shape[0])).difference(c_idx))
+    print(out[:,non_c_idx])
     return out
 
 def compute_label(x_vec, beta_vec, exact=False):
@@ -86,7 +90,7 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_in
     # pick indices for interaction terms
     #if interaction_prod:
     c_idx_int_prod = np.random.choice(c_idx, size=2*num_int_prod, replace=False)
-    non_c_idx_int_prod = np.random.choice(non_c_idx, size=2*num_int_prod, replace=False)
+    non_c_idx_int_prod = np.random.choice(non_c_idx, size=2*num_int_prod*k, replace=True)
     #if interaction_thresh:
     non_c_idx_int_thresh = np.random.choice(non_c_idx, size=2*num_int_thresh, replace=False)
     c_idx_int_thresh = np.random.choice(c_idx, size=2*num_int_thresh, replace=False)
@@ -117,7 +121,7 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_in
     y_train = None
     y_test = None
 
-    for i in range(k):
+    for i in range(7): # 6, 4, test 1, 1, 1, 1, 1
         numpos = int(np.around(baserates[i] * nk[i])) # total number of positives we want in the end
         numneg = int(nk[i]) - numpos
 
@@ -138,17 +142,17 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_in
                 y_studyspecific = compute_label_interact(x_vec=x_vec[:,non_c_idx], beta_vec=beta_vec_list[i, non_c_idx],
                                                          int_thresh=int_thresh,
                                                          interaction_prod=interaction_prod, interaction_thresh=interaction_thresh,
-                                                         x_vec_int_prod=x_vec[:,non_c_idx_int_prod], beta_vec_int_prod=beta_vec_list_int_prod[i,num_int_prod:],
+                                                         x_vec_int_prod=x_vec[:,non_c_idx_int_prod[i:i+2]], beta_vec_int_prod=beta_vec_list_int_prod[i,num_int_prod:],
                                                          x_vec_int_thresh=x_vec[:,non_c_idx_int_thresh], beta_vec_int_thresh=beta_vec_list_int_thresh[i,num_int_thresh:],
                                                          exact=True)
-            elif interaction_prod and not interaction_thresh:
+            elif interaction_prod and not interaction_thresh: # HERE
                 y = compute_label_interact(x_vec=x_vec[:,c_idx], beta_vec=beta_vec_list[i, c_idx], int_thresh=int_thresh,
                                            interaction_prod=interaction_prod, interaction_thresh=interaction_thresh,
                                            x_vec_int_prod=x_vec[:,c_idx_int_prod], beta_vec_int_prod=beta_vec_list_int_prod[i,:num_int_prod])
                 y_studyspecific = compute_label_interact(x_vec=x_vec[:,non_c_idx], beta_vec=beta_vec_list[i, non_c_idx],
                                                          int_thresh=int_thresh,
                                                          interaction_prod=interaction_prod, interaction_thresh=interaction_thresh,
-                                                         x_vec_int_prod=x_vec[:,non_c_idx_int_prod], beta_vec_int_prod=beta_vec_list_int_prod[i,num_int_prod:],
+                                                         x_vec_int_prod=x_vec[:,non_c_idx_int_prod[i:i+2]], beta_vec_int_prod=beta_vec_list_int_prod[i,num_int_prod:],
                                                          exact=True)
             elif not interaction_prod and interaction_thresh:
                 y = compute_label_interact(x_vec=x_vec[:,c_idx], beta_vec=beta_vec_list[i, c_idx], int_thresh=int_thresh,
@@ -187,7 +191,7 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_in
                 y_studyspecific = compute_label_interact(x_vec=x_vec[:,non_c_idx], beta_vec=beta_vec_list[i, non_c_idx],
                                                          int_thresh=int_thresh,
                                                          interaction_prod=interaction_prod, interaction_thresh=interaction_thresh,
-                                                         x_vec_int_prod=x_vec[:,non_c_idx_int_prod], beta_vec_int_prod=beta_vec_list_int_prod[i,num_int_prod:],
+                                                         x_vec_int_prod=x_vec[:,non_c_idx_int_prod[i:i+2]], beta_vec_int_prod=beta_vec_list_int_prod[i,num_int_prod:],
                                                          x_vec_int_thresh=x_vec[:,non_c_idx_int_thresh], beta_vec_int_thresh=beta_vec_list_int_thresh[i,num_int_thresh:],
                                                          exact=True)
             elif interaction_prod and not interaction_thresh:
@@ -197,7 +201,7 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_in
                 y_studyspecific = compute_label_interact(x_vec=x_vec[:,non_c_idx], beta_vec=beta_vec_list[i, non_c_idx],
                                                          int_thresh=int_thresh,
                                                          interaction_prod=interaction_prod, interaction_thresh=interaction_thresh,
-                                                         x_vec_int_prod=x_vec[:,non_c_idx_int_prod], beta_vec_int_prod=beta_vec_list_int_prod[i,num_int_prod:],
+                                                         x_vec_int_prod=x_vec[:,non_c_idx_int_prod[i:i+2]], beta_vec_int_prod=beta_vec_list_int_prod[i,num_int_prod:],
                                                          exact=True)
             elif not interaction_prod and interaction_thresh:
                 y = compute_label_interact(x_vec=x_vec[:,c_idx], beta_vec=beta_vec_list[i, c_idx], int_thresh=int_thresh,
@@ -223,14 +227,20 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_in
         y_vec = np.concatenate((np.ones(numpos), np.zeros(numneg)))
 
         if i == 0: # if first study, save as final file
-            x_train = x_vec_out
-            y_train = y_vec
-        elif i < k - 1: # if further training studies, concatenate
-            x_train = np.concatenate((x_train, x_vec_out), axis=0)
-            y_train = np.concatenate((y_train, y_vec), axis=0)
-        else: # last study is test study
+            x_train = np.tile(x_vec_out, (6,1))
+            y_train = np.tile(y_vec, 6)
+        elif i == 1: # i < k - 1: # if further training studies, concatenate
+            x_train_2 = np.tile(x_vec_out, (4,1))
+            y_train_2 = np.tile(y_vec, 4)
+            x_train = np.concatenate((x_train, x_train_2), axis=0)
+            y_train = np.concatenate((y_train, y_train_2), axis=0)
+        elif i == 2: # last study is test study
             x_test = x_vec_out
             y_test = y_vec
+        else:
+            x_test = np.concatenate((x_test, x_vec_out), axis=0)
+            y_test = np.concatenate((y_test, y_vec), axis=0)
+            
 
 
     # make y vectors 2-D
@@ -241,11 +251,16 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_in
 
     # create attr matrices
     ind = np.repeat(0, nk[0])
-    for i in range(1, k-1):
+    for i in range(1, k-5):
         ind = np.concatenate((ind, np.repeat(i, nk[i])), axis=0)
     attr_train = np.zeros((ind.size, ind.max()+1))
     attr_train[np.arange(ind.size), ind] = 1
-    attr_test = np.concatenate( (np.ones((int(nk[-1]), 1)), np.zeros((int(nk[-1]), k-2))), axis=1)
+
+    ind = np.repeat(0, nk[0])
+    for i in range(1, 5):
+        ind = np.concatenate((ind, np.repeat(i, nk[i])), axis=0)
+    attr_test = np.zeros((ind.size, 10))
+    attr_test[np.arange(ind.size), ind] = 1
 
     # create train and valid inds
     numtrainidx = int(0.8 * x_train.shape[0])
@@ -266,14 +281,11 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, num_in
 
 
 if __name__ == '__main__':
-    # Save file name:
-    outfile = 'run_agree_interact_common_20_061619_prod_2_10'
+    num_trials = 50
 
     # Set parameters for run
-    random_seed = 1
-    np.random.seed(random_seed)
-    K = 11 # Total number of studies
-    K_train = K-1 # number of training studies
+    K = 15 # Total number of studies
+    K_train = K-5 # number of training studies
     nk = np.ones(K)*5000 #5000 # number of observations per study, currently all same
     p = 30 # number of covariates
     p_c = 20 # number of common covariates
@@ -281,22 +293,61 @@ if __name__ == '__main__':
     eta = 2 # window size for non-comman covariates
     beta_min = 0.25 # beta window minimum
     beta_max = 2 # beta window maximum
-    num_int_prod = 2 # number of interaction terms based on the product of two covariates
+    num_int_prod = 1 # number of interaction terms based on the product of two covariates
     num_int_thresh = 0 # number of interaction terms based on whether two covariates are above a threshold
     int_thresh = 0 # threshold of interest for the interaction terms
     beta_int_min = 0.25 # interaction term beta window minimum
     beta_int_max = 1 # interaction term beta window maximum
 
-    # covariate means
+    random_seed = 1
+    np.random.seed(random_seed)
     mu = np.random.uniform(-3, 3, size=K*p).reshape((K, p))
-
-    # SIG diagonal
-    #sig = np.identity(p)
-
-    # SIG arbitrary
     arb = np.random.uniform(-1, 1, size=p*p).reshape((p, p))
     sig = arb.T @ arb
-
+    outfile = "run_agree_interact_common_20_061420_prod_1_6_same_4_same_5_test"
     multi_study_sim(k=K, nk=nk, p=p, p_c=p_c, mu=mu, sig=sig, eps=eps, eta=eta, beta_min=beta_min, beta_max=beta_max,
-                    num_int_prod=num_int_prod, num_int_thresh=num_int_thresh, int_thresh=int_thresh,
-                    beta_int_min=beta_int_min, beta_int_max=beta_int_max, random_seed=random_seed, outfile=outfile)
+                        num_int_prod=num_int_prod, num_int_thresh=num_int_thresh, int_thresh=int_thresh,
+                        beta_int_min=beta_int_min, beta_int_max=beta_int_max, random_seed=random_seed, outfile=outfile)
+
+#     for trial in range(1, num_trials+1):
+#         outfile = "~/rvr/data/run_het/run_agree_interact_common_20_061420_prod_1_4_FINAL_TRIAL_" + str(trial)
+#         random_seed = trial
+#         np.random.seed(random_seed)
+
+#         # covariate means
+#         mu = np.random.uniform(-3, 3, size=K*p).reshape((K, p))
+
+#         # SIG diagonal
+#         #sig = np.identity(p)
+
+#         # SIG arbitrary
+#         arb = np.random.uniform(-1, 1, size=p*p).reshape((p, p))
+#         sig = arb.T @ arb
+
+#         multi_study_sim(k=K, nk=nk, p=p, p_c=p_c, mu=mu, sig=sig, eps=eps, eta=eta, beta_min=beta_min, beta_max=beta_max,
+#                         num_int_prod=num_int_prod, num_int_thresh=num_int_thresh, int_thresh=int_thresh,
+#                         beta_int_min=beta_int_min, beta_int_max=beta_int_max, random_seed=random_seed, outfile=outfile)
+
+#     # Set parameters for run
+#     K = 11 # Total number of studies
+#     K_train = K-1 # number of training studies
+#     nk = np.ones(K)*5000 #5000 # number of observations per study, currently all same
+
+#     for trial in range(1, num_trials+1):
+#         outfile = "~/rvr/data/run_het/run_agree_interact_common_20_061420_prod_1_11_FINAL_TRIAL_" + str(trial)
+#         random_seed = trial
+#         np.random.seed(random_seed)
+
+#         # covariate means
+#         mu = np.random.uniform(-3, 3, size=K*p).reshape((K, p))
+
+#         # SIG diagonal
+#         #sig = np.identity(p)
+
+#         # SIG arbitrary
+#         arb = np.random.uniform(-1, 1, size=p*p).reshape((p, p))
+#         sig = arb.T @ arb
+
+#         multi_study_sim(k=K, nk=nk, p=p, p_c=p_c, mu=mu, sig=sig, eps=eps, eta=eta, beta_min=beta_min, beta_max=beta_max,
+#                         num_int_prod=num_int_prod, num_int_thresh=num_int_thresh, int_thresh=int_thresh,
+#                         beta_int_min=beta_int_min, beta_int_max=beta_int_max, random_seed=random_seed, outfile=outfile)

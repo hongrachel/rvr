@@ -77,7 +77,7 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, random
     y_train = None
     y_test = None
 
-    for i in range(k):
+    for i in range(4):
         numpos = int(np.around(baserates[i] * nk[i])) # total number of positives we want in the end
         numneg = int(nk[i]) - numpos
 
@@ -121,9 +121,9 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, random
         y_vec = np.concatenate((np.ones(numpos), np.zeros(numneg)))
 
         if i == 0: # if first study, save as final file
-            x_train = x_vec_out
-            y_train = y_vec
-        elif i < k - 1: # if further training studies, concatenate
+            x_train = np.tile(x_vec_out, (8,1))
+            y_train = np.tile(y_vec, 8)
+        elif i == 1 or i == 2: # i < k - 1: # if further training studies, concatenate
             x_train = np.concatenate((x_train, x_vec_out), axis=0)
             y_train = np.concatenate((y_train, y_vec), axis=0)
         else: # last study is test study
@@ -159,33 +159,68 @@ def multi_study_sim(k, nk, p, p_c, mu, sig, eps, eta, beta_min, beta_max, random
 
 
 if __name__ == '__main__':
-    # Save file name:
-    outfile = 'run_orfunc_052619_10'
-
+    num_trials = 50
     # Set parameters for run
-    random_seed = 2
-    np.random.seed(random_seed)
     K = 11 # Total number of studies
     K_train = K-1 # number of training studies
     nk = np.ones(K)*5000 #5000 # number of observations per study, currently all same
     p = 30 # number of covariates
-    p_c = 8 # number of common covariates
+    p_c = 20 # number of common covariates
     eps = 0.1 # window size for common covariates
     eta = 2 # window size for non-comman covariates
     beta_min = 0.25 # beta window minimum
     beta_max = 2 # beta window maximum
 
-    # covariate means
+    random_seed = 1
+    np.random.seed(random_seed)
     mu = np.random.uniform(-3, 3, size=K*p).reshape((K, p))
-
-    # SIG diagonal
-    #sig = np.identity(p)
-
-    # SIG arbitrary
     arb = np.random.uniform(-1, 1, size=p*p).reshape((p, p))
     sig = arb.T @ arb
-
+    outfile = "run_orfunc_common_20_061420_8_same_2_diff"
     multi_study_sim(k=K, nk=nk, p=p, p_c=p_c, mu=mu, sig=sig, eps=eps, eta=eta, beta_min=beta_min, beta_max=beta_max,
-                    random_seed=random_seed, outfile=outfile)
+                        random_seed=random_seed, outfile=outfile)
+#     for trial in range(1, num_trials+1):
+#         # Save file name:
+#         outfile = "~/rvr/data/run_orfunc/run_orfunc_common_20_061420_4_FINAL_TRIAL_" + str(trial)
+#         # Set seed:
+#         random_seed = trial
+#         np.random.seed(random_seed)
 
+#         # covariate means
+#         mu = np.random.uniform(-3, 3, size=K*p).reshape((K, p))
+
+#         # SIG diagonal
+#         #sig = np.identity(p)
+
+#         # SIG arbitrary
+#         arb = np.random.uniform(-1, 1, size=p*p).reshape((p, p))
+#         sig = arb.T @ arb
+
+#         multi_study_sim(k=K, nk=nk, p=p, p_c=p_c, mu=mu, sig=sig, eps=eps, eta=eta, beta_min=beta_min, beta_max=beta_max,
+#                         random_seed=random_seed, outfile=outfile)
+
+#     # Set parameters for run
+#     K = 11 # Total number of studies
+#     K_train = K-1 # number of training studies
+#     nk = np.ones(K)*5000 #5000 # number of observations per study, currently all same
+
+#     for trial in range(1, num_trials+1):
+#         # Save file name:
+#         outfile = "~/rvr/data/run_orfunc/run_orfunc_common_20_061420_11_FINAL_TRIAL_" + str(trial)
+#         # Set seed:
+#         random_seed = trial
+#         np.random.seed(random_seed)
+
+#         # covariate means
+#         mu = np.random.uniform(-3, 3, size=K*p).reshape((K, p))
+
+#         # SIG diagonal
+#         #sig = np.identity(p)
+
+#         # SIG arbitrary
+#         arb = np.random.uniform(-1, 1, size=p*p).reshape((p, p))
+#         sig = arb.T @ arb
+
+#         multi_study_sim(k=K, nk=nk, p=p, p_c=p_c, mu=mu, sig=sig, eps=eps, eta=eta, beta_min=beta_min, beta_max=beta_max,
+#                         random_seed=random_seed, outfile=outfile)
 

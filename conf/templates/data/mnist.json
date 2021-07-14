@@ -3,5 +3,5 @@
 "attr1_name": "Study1",
 "biased": false,
 "even": false,
-"use_attr": false,
-"multi": 3
+"use_attr": true,
+"multi": 2

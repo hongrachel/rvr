@@ -3,9 +3,9 @@ import itertools
 import os
 import sys
 import argparse
-sys.path.append("/Users/Frances/Documents/seas-fellowship/rvr/src/")
+sys.path.append("/Users/rachelh/Programs/rvr/src/")
 sys.path.append("~/rvr/src/")
-sys.path.append("/n/home06/fding/rvr/src/testing/")
+sys.path.append("/n/home01/rhong/rvr/src/testing/")
 from find_test_result import get_ckpt_stats, loss, loss_subset
 
 BIG = 99999.
