@@ -95,11 +95,12 @@ class Trainer(object):
         for epoch in range(n_epochs):
             print('starting Epoch {:d}'.format(epoch))
             train_iter = self.data.get_batch_iterator('train', self.batch_size)
-            train_L = {'class': 0., 'disc': 0., 'class_err': 0., 'disc_err': 0., 'recon': 0.}
+            train_L = {'class': 0., 'disc': 0., 'class_err': 0., 'disc_err': 0., 'recon': 0., 'total_loss': 0.}
             self.batches_seen = 0
             trained_class = 0; trained_aud = 0
             Y_hats_tr = np.empty((0, 1))
             A_hats_tr = np.empty((0, self.model.adim))
+            print("ADIM: " + str(self.model.adim))
 
             print('Class DP last epoch: {:.3f}; Disc DP Bound last epoch: {:.3f}'.format(class_dp_last_ep, disc_dp_bound_last_ep))
             trained_class_this_epoch = False
@@ -109,8 +110,8 @@ class Trainer(object):
                 if len(x) < self.batch_size:  # hack for WGAN-GP training; don't process weird-sized batches
                     continue
                 feed_dict = {self.model.X: x, self.model.Y: y, self.model.A: a, self.model.epoch: np.array([epoch])}
-                if self.batches_seen == 0:  # a quick summary before any training
-                    summary_writer.add_summary(self.sess.run(self.summ_op, feed_dict=feed_dict), epoch)
+                # if self.batches_seen == 0:  # a quick summary before any training
+                #     summary_writer.add_summary(self.sess.run(self.summ_op, feed_dict=feed_dict), epoch)
                 self.batches_seen += 1
                 # train encoder-classifier-decoder
                 _, class_loss, class_err, recon_loss, Y_hat, A_hat = self.sess.run(
@@ -134,6 +135,7 @@ class Trainer(object):
                         trained_disc_this_epoch = True
                         trained_aud += 1
                         aud_ops = [self.aud_op] + aud_ops_base
+                        # print("AUD_OPS: " + str(aud_ops))
                         # train auditor
                         _, total_loss, aud_loss, aud_err, Y_hat, A_hat = self.sess.run(
                                 aud_ops,
@@ -146,6 +148,22 @@ class Trainer(object):
                             feed_dict=feed_dict
                         )
 
+                # print ("recon loss: " + str(np.mean(recon_loss)))
+                # print ("aud loss: " + str(np.mean(aud_loss)))
+
+                # print (aud_loss)
+                # if np.mean(aud_loss) > 2:
+                #     if aud_loss[0] > 2:
+                #         a_hat = ""
+                #         a = ""
+                #         a = self.model.A.eval()[0]
+                #         for i in range(len(A_hat[0])):
+                #             a_hat += str(A_hat[0][i])
+                #             #a += str(self.model.A[0][i])
+                #         print ("STR A_HAT: " + a_hat)
+                #         print ("STR A: " + a)
+                #         raise Exception
+
                 Y_hats_tr = np.concatenate((Y_hats_tr, Y_hat))
                 A_hats_tr = np.concatenate((A_hats_tr, A_hat))
 
@@ -155,13 +173,17 @@ class Trainer(object):
                 train_L['class_err'] += class_err
                 train_L['disc_err'] += aud_err
                 train_L['recon'] += np.mean(recon_loss)
+                train_L['total_loss'] += np.mean(total_loss)
+
+                # print (train_L['recon'])
+                # print (train_L['disc'])
 
             print('E{:d}: trained class {:d}, trained aud {:d}'.format(epoch, trained_class, trained_aud))
             for k in train_L:
                 train_L[k] /= self.batches_seen
             train_L['ttl'] = train_L['class'] - train_L['disc']
-            train_res_str = 'E{:d}: ClaCE:{:.3f}, DisCE:{:.3f}, TtlCE:{:.3f}, ClaErr:{:.3f}, DisErr:{:.3f}, RecLoss:{:.3f}'.\
-                            format(epoch, train_L['class'], train_L['disc'], train_L['ttl'], train_L['class_err'], train_L['disc_err'], train_L['recon'])
+            train_res_str = 'E{:d}: ClaCE:{:.3f}, DisCE:{:.3f}, TtlCE:{:.3f}, ClaErr:{:.3f}, DisErr:{:.3f}, RecLoss:{:.3f}, TotalLoss:{:.3f}'.\
+                            format(epoch, train_L['class'], train_L['disc'], train_L['ttl'], train_L['class_err'], train_L['disc_err'], train_L['recon'], train_L['total_loss'])
 
             valid_iter = self.data.get_batch_iterator('valid', self.batch_size)
             valid_L = {'class': 0., 'disc': 0., 'class_err': 0., 'disc_err': 0., 'recon': 0., 'baseline_aud': 0., 'final_aud': 0.}
@@ -233,10 +255,9 @@ class Trainer(object):
                 summary.value.add(tag="DP", simple_value=demo_dispar)
                 print('DP: ', demo_dispar)
 
-            record_interval = n_epochs // 20
-            if record_interval == 0:
-                record_interval = 1
-
+            record_interval = n_epochs // 50
+            if not record_interval:
+                record_interval += 1
             if epoch % record_interval == 0 and not self.regbas:
                 # Valid set
                 # create a new folder to log in
@@ -273,7 +294,7 @@ class Trainer(object):
                 if isinstance(self.model, WeightedDemParWassGpGan):
                     summary.value.add(tag="grad_norm_err", simple_value=self.sess.run(self.model.grad_norms, feed_dict=feed_dict))
 
-            summary_writer.add_summary(summary, epoch)
+            #summary_writer.add_summary(summary, epoch)
             summary_writer.flush()
 
             if epoch % 1 == 0:
@@ -281,7 +302,7 @@ class Trainer(object):
 
             l = valid_L['class'] if self.regbas else valid_L['ttl']
 
-            if l < min_val_loss:
+            if l < min_val_loss and epoch > 0:
                 min_val_loss = l
                 min_epoch = epoch
                 if self.regbas:

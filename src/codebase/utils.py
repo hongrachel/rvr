@@ -17,7 +17,7 @@ def make_comma_separated_args_dirname_friendly(templates, overrides, transfer_ov
     return dirname
 
 
-def get_npz_basename(name, biased, even, **kwargs):
+def get_npz_basename(name, biased, even, setnum=None, **kwargs):
     if name == 'german':
         if biased:
             basename = 'german_valid_inds_biased_valid_inds.npz'
@@ -58,7 +58,28 @@ def get_npz_basename(name, biased, even, **kwargs):
     elif name == 'run0':
         basename = 'run0_v2.npz'
     elif name == 'runhet':
-        basename = 'run_het.npz'
+        if setnum == '1':
+            basename = 'run_agree_interact_common_20_061619_prod_1_4_try_1.npz'
+        elif setnum == '2':
+            basename = 'run_agree_interact_common_20_061619_prod_1_4_try_2.npz'
+        elif setnum == '3':
+            basename = 'run_agree_interact_common_20_061619_prod_1_4_try_3.npz'
+        elif setnum == '4':
+            basename = 'run_agree_interact_common_20_061619_prod_1_4_try_4.npz'
+        elif setnum == '5':
+            basename = 'run_agree_interact_common_20_061619_prod_1_4_try_5.npz'
+
+        elif setnum == '6':
+            basename = 'run_agree_interact_common_20_061619_prod_1_10_try_1.npz'
+        elif setnum == '7':
+            basename = 'run_agree_interact_common_20_061619_prod_1_10_try_2.npz'
+        elif setnum == '8':
+            basename = 'run_agree_interact_common_20_061619_prod_1_10_try_3.npz'
+        elif setnum == '9':
+            basename = 'run_agree_interact_common_20_061619_prod_1_10_try_4.npz'
+        elif setnum == '10':
+            basename = 'run_agree_interact_common_20_061619_prod_1_10_try_5.npz'
+
     elif name == 'runp1_2':
         basename = 'run_agree_no_interact_050919.npz'  #'run_p1_2_042219.npz'
     elif name == 'runp1_p5':
@@ -66,13 +87,99 @@ def get_npz_basename(name, biased, even, **kwargs):
     elif name == 'runagree':
         basename ='run_agree_interact_common_20_061619_prod_2_10.npz'
     elif name == 'runorfunc':
-        basename ='run_orfunc_no_br_061019_adim_10.npz'
+        if setnum == '1':
+            basename = 'run_orfunc_052619_4_try_1.npz'
+        elif setnum == '2':
+            basename = 'run_orfunc_052619_4_try_2.npz'
+        elif setnum == '3':
+            basename = 'run_orfunc_052619_4_try_3.npz'
+        elif setnum == '4':
+            basename = 'run_orfunc_052619_4_try_4.npz'
+        elif setnum == '5':
+            basename = 'run_orfunc_052619_4_try_5.npz'
+
+        elif setnum == '6':
+            basename = 'run_orfunc_052619_10_try_1.npz'
+        elif setnum == '7':
+            basename = 'run_orfunc_052619_10_try_2.npz'
+        elif setnum == '8':
+            basename = 'run_orfunc_052619_10_try_3.npz'
+        elif setnum == '9':
+            basename = 'run_orfunc_052619_10_try_4.npz'
+        elif setnum == '10':
+            basename = 'run_orfunc_052619_10_try_5.npz'
     elif name == 'bcesets':
         basename = 'bcesets_test_to_001_REAL.npz'
     elif name == 'shapes':
         basename = 'shapes_071719.npz'
     elif name == 'mnist_irm':
-        basename = 'mnist_071919.npz'
+        if setnum == '1':
+            basename = 'mnist_3study_digit100_unequal_color_try_1.npz'
+        elif setnum == '2':
+            basename = 'mnist_3study_digit100_unequal_color_try_2.npz'
+        elif setnum == '3':
+            basename = 'mnist_3study_digit100_unequal_color_try_3.npz'
+        elif setnum == '4':
+            basename = 'mnist_3study_digit100_unequal_color_try_4.npz'
+        elif setnum == '5':
+            basename = 'mnist_3study_digit100_unequal_color_try_5.npz'
+
+        elif setnum == '6':
+            basename = 'mnist_6study_digit100_unequal_color_try_1.npz'
+        elif setnum == '7':
+            basename = 'mnist_6study_digit100_unequal_color_try_2.npz'
+        elif setnum == '8':
+            basename = 'mnist_6study_digit100_unequal_color_try_3.npz'
+        elif setnum == '9':
+            basename = 'mnist_6study_digit100_unequal_color_try_4.npz'
+        elif setnum == '10':
+            basename = 'mnist_6study_digit100_unequal_color_try_5.npz'
     elif name == 'mnist':
-        basename = 'mnist_simplestudy_101619.npz'
+        if setnum == '1':
+            basename = 'mnist_digit75_color80test_5050_041020_try_1.npz'
+        elif setnum == '2':
+            basename = 'mnist_digit75_color80test_5050_041020_try_2.npz'
+        elif setnum == '3':
+            basename = 'mnist_digit75_color80test_5050_041020_try_3.npz'
+        elif setnum == '4':
+            basename = 'mnist_digit75_color80test_5050_041020_try_4.npz'
+        elif setnum == '5':
+            basename = 'mnist_digit75_color80test_5050_041020_try_5.npz'
+
+        elif setnum == '6':
+            basename = 'mnist_digit100_color90flipped_testpurple_022120_try_1.npz'
+        elif setnum == '7':
+            basename = 'mnist_digit100_color90flipped_testpurple_022120_try_2.npz'
+        elif setnum == '8':
+            basename = 'mnist_digit100_color90flipped_testpurple_022120_try_3.npz'
+        elif setnum == '9':
+            basename = 'mnist_digit100_color90flipped_testpurple_022120_try_4.npz'
+        elif setnum == '10':
+            basename = 'mnist_digit100_color90flipped_testpurple_022120_try_5.npz'
+    elif name == 'mnist_simple':
+        basename = 'mnist_digit100_color90flipped_testpurple_022120.npz'
+        # if setnum == '1':
+        #     basename = 'mnist_4060_4060_unbalanced_digit75_color80flipped_test_6040_032620_set_1.npz'
+        # elif setnum == '2':
+        #     basename = 'mnist_4060_4060_unbalanced_digit75_color80flipped_test_6040_032620_set_2.npz'
+        # elif setnum == '3':
+        #     basename = 'mnist_4060_4060_unbalanced_digit75_color80flipped_test_6040_032620_set_3.npz'
+        # elif setnum == '4':
+        #     basename = 'mnist_4060_4060_unbalanced_digit75_color80flipped_test_6040_032620_set_4.npz'
+        # elif setnum == '5':
+        #     basename = 'mnist_4060_4060_unbalanced_digit75_color80flipped_test_6040_032620_set_5.npz'
+        # else:
+        #     basename = setnum + " ERROR"
+    elif name == 'mnist_3':
+        basename = 'mnist_digit100_study1red_study2green_testblue_041520.npz'
+    elif name == 'pacs':
+        if setnum == '1':
+            basename = 'pacs_P_test_042420_64.npz'
+        elif setnum == '2':
+            basename = 'pacs_A_test_042420_64.npz'
+        elif setnum == '3':
+            basename = 'pacs_C_test_042420_64.npz'
+        elif setnum == '4':
+            basename = 'pacs_S_test_042420_64.npz'
+        
     return basename

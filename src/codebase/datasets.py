@@ -9,12 +9,13 @@ def mb_round(t, bs):
  
 
 class Dataset(object):
-    def __init__(self, name, attr0_name, attr1_name, npzfile, seed=0, use_attr=False, load_on_init=True, y2i=None, pred_attr=False, batch_size=None, multi=-1, **kwargs):
+    def __init__(self, name, attr0_name, attr1_name, npzfile, seed=0, use_attr=False, cnn=False, load_on_init=True, y2i=None, pred_attr=False, batch_size=None, multi=-1, **kwargs):
         self.name = name
         self.attr0_name = attr0_name
         self.attr1_name = attr1_name
         self.npzfile = npzfile
         self.use_attr = use_attr
+        self.cnn = cnn
         self.pred_attr = pred_attr
         self.batch_size = batch_size
         self.multi = multi
@@ -67,7 +68,15 @@ class Dataset(object):
                 self.y_train = np.expand_dims(self.y2_train[:,self.y2i], 1)
                 self.y_test = np.expand_dims(self.y2_test[:, self.y2i], 1)
 
-            if self.use_attr:
+            if self.use_attr and not self.cnn:
+                # half_include_attr_train = []
+                # for elem in self.attr_train:
+                #     if np.random.random() < 0.5:
+                #         half_include_attr_train.append(elem)
+                #     else:
+                #         half_include_attr_train.append([0., 0., 0.])
+
+                # self.x_train = np.concatenate([self.x_train, half_include_attr_train], 1)
                 self.x_train = np.concatenate([self.x_train, self.attr_train], 1)
                 self.x_test = np.concatenate([self.x_test, self.attr_test], 1)
                 if 'x_valid' in dat:
